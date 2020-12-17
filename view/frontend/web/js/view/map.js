@@ -35,37 +35,164 @@ define([
     registry
 ) {
     'use strict';
-    var lockersCount = 5;
-    var initLocation = '';
-    var lockers = [];
+    var map = null;
+    var myMarker;
+    var myLatlng;
+    var shippingPosition = {};
+    var points = [];
+    var markersPosition = [];
+    var defaultLocation = {
+        lat: 24.7135517,
+        lng: 46.67529569999999
+    };
+    var self = this;
 
     return Component.extend({
-        lockers: ko.observableArray([]),
-        lockersCount: ko.observableArray([]),
-        activeItem: ko.observable(),
-        showMoreAllowed: ko.observable(true),
-        isMobile: ko.observable(false),
-        defaultPostCode: ko.observable('London'),
+        points: ko.observableArray([]),
         /**
          * @return {exports}
          */
         initialize: function () {
-            var self = this;
             this._super();
-            self.reloadLeft();
             return this;
         },
 
-        findPostCodeKeypress: function (element, event) {
-            if (event.keyCode == 13) {
-                var self = this;
-                self.findPostcode(false, event);
+        confirmCanAccessThisLocation: function (data, event) {
+            if ($(event.currentTarget).prop("checked") === true) {
+                $(event.currentTarget).parent().parent().parent().parent().parent().find('.area-select-point button').removeAttr('disabled');
+                $(event.currentTarget).parent().parent().parent().parent().parent().find('.area-select-point button').removeClass('disabled');
+            } else {
+                $(event.currentTarget).parent().parent().parent().parent().parent().find('.area-select-point button').attr('disabled', true);
+                $(event.currentTarget).parent().parent().parent().parent().parent().find('.area-select-point button').addClass('disabled');
             }
-            return true;
         },
 
-        setLocker: function (locker) {
-            window.localStorage.removeItem('selected_locker');
+        controlPopupWarningRestricted: function (data, event) {
+            if ($(event.currentTarget).hasClass('fa-times')) {
+                $(event.currentTarget).parent().prev().hide();
+                $(event.currentTarget).attr('class', 'fa fa-exclamation-triangle');
+            } else {
+                $(event.currentTarget).parent().prev().show()
+                $(event.currentTarget).attr('class', 'fa fa-times')
+            }
+        },
+
+        addYourLocationButton: function (map, lat, lng) {
+            var marker = new google.maps.Marker({
+                position: {
+                    lat: lat,
+                    lng: lng
+                },
+                map: map,
+                title: 'Your shipping address',
+                icon: {
+                    url: 'https://stage.redboxsa.com/marker_my_location.png'
+                }
+            });
+        },
+
+        setClickMarker: function(infowindow, marker, point, positionTop) {
+            marker.addListener('click', function(event) {
+                var contentString = `<h4>${point.host_name_en}</h4><p>${point.name}</p>`;
+
+                infowindow.setContent(contentString);
+
+                infowindow.open(map, marker);
+                $('#list-point').animate({
+                    scrollTop: positionTop
+                }, 'slow');
+            });
+        },
+
+        setFindAreaMap: function (map) {
+            var card = document.getElementById('pac-card');
+            var input = document.getElementById('pac-input');
+
+            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
+
+            const autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo('bounds', map);
+            autocomplete.setFields(
+                ['name', 'formatted_address', 'address_components', 'geometry', 'icon']
+            );
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                if (place) {
+                    getPoints(place.geometry.location.lat(), place.geometry.location.lng())
+                }
+            });
+        },
+
+        initializeGMap: function (lat, lng, lat1, lng1, pickedPoint) {
+            var self = this;
+            var bounds = new google.maps.LatLngBounds();
+
+            if (!pickedPoint) {
+                let myLatLng = new google.maps.LatLng(lat, lng);
+                let myLatLng1 = new google.maps.LatLng(lat1, lng1);
+                bounds.extend(myLatLng);
+                bounds.extend(myLatLng1);
+            }
+
+            var center = {
+                lat: lat,
+                lng: lng
+            };
+            let temp = markersPosition.find(e => e.selected)
+            if (temp) {
+                center = temp.location;
+            }
+
+            var myOptions = {
+                zoom: 17,
+                center: center,
+                mapTypeControl: false,
+                scaleControl: true,
+                zoomControl: true,
+            };
+
+            map = new google.maps.Map(document.getElementById("map"), myOptions);
+
+            if (!pickedPoint) {
+                map.fitBounds(bounds);
+            }
+
+            var infowindow = new google.maps.InfoWindow({
+                content: ''
+            });
+            markersPosition.forEach(function (point) {
+                var marker = new google.maps.Marker({
+                    position: point.location,
+                    map: map,
+                    title: point.name,
+                    icon: {
+                        url: 'https://stage.redboxsa.com/marker_redbox.png'
+                    }
+                });
+                var positionTop = $(`.per-point[value-id=${point.id}]`).position().top;
+                self.setClickMarker(infowindow, marker, point, positionTop);
+            });
+            self.setFindAreaMap(map);
+            // self.addYourLocationButton(map, lat, lng);
+        },
+
+        setMapWithPoint: function (id) {
+            if (map) {
+                let pointThis = points.find(e => e.id == id)
+                var latLng = new google.maps.LatLng(pointThis.location.lat, pointThis.location.lng);
+                map.setCenter(latLng);
+                map.setZoom(17);
+            }
+        },
+
+        pickPoint: function (id) {
+            $('.per-point').removeClass('selected');
+            $(`.per-point[value-id=${id}]`).addClass('selected');
+            var point = points.find(e => e.id === id);
+            $('#locker-name').val(`${point.host_name_en} (${point.point_name})`);
+            $('#locker-id').val(id);
+            this.setMapWithPoint(id);
+            window.localStorage.removeItem('selected_point');
             var address = quote.shippingAddress();
 
             if (!address.hasOwnProperty('extensionAttributes')) {
@@ -77,255 +204,33 @@ define([
                 });
             }
 
-            if (!address.extensionAttributes.hasOwnProperty('lockerMachine')) {
-                Object.defineProperty(address.extensionAttributes, 'lockerMachine', {
+            if (!address.extensionAttributes.hasOwnProperty('point_id')) {
+                Object.defineProperty(address.extensionAttributes, 'point_id', {
                     writable: true,
                     enumerable: true,
                     configurable: true
                 });
             }
 
-            address.extensionAttributes.lockerMachine = $.isEmptyObject(locker) ? false : locker.id;
-            window.localStorage.setItem('selected_locker', JSON.stringify(locker));
+            address.extensionAttributes.point_id = $.isEmptyObject(point) ? false : point.id;
+            window.localStorage.setItem('selected_point', JSON.stringify(point));
             $('#button-reset-selected-locker').trigger('click');
         },
 
-        precisionRound: function (number, precision) {
-            var factor = Math.pow(10, precision);
-            return Math.round(number * factor) / factor;
-        },
-
-        reloadMap: function () {
-            var self = this,
-                infoWindow = new googleMaps.InfoWindow(),
-                marker;
-            if (!initLocation) {
-                initLocation = window.initLocation;
-            }
-            if (initLocation) {
-                if (initLocation.lat < 38) {
-                    self.findPostcode(false, false);
-                    return;
-                }
-
-                var zoom = 10;
-                if (lockers.length > 0) {
-                    zoom = Math.round(14 - Math.log(lockers.slice(0, lockersCount)[lockers.length - 1].distance) / Math.LN2);
-                }
-
-                var map = new googleMaps.Map($('#map')[0], {
-                    zoom: zoom,
-                    mapTypeId: googleMaps.MapTypeId.ROADMAP,
-                    center: initLocation
+        initRedbox: function () {
+            var self = this;
+            points = JSON.parse(window.localStorage.getItem('points'));
+            points.forEach(function (point) {
+                markersPosition.push({
+                    id: point.id,
+                    name: point.point_name,
+                    host_name_en: point.host_name_en,
+                    location: point.location,
+                    selected: false
                 });
-                var icon = {
-                    url: window.mapIconPath, // url
-                    scaledSize: new google.maps.Size(22, 40), // scaled size
-                    origin: new google.maps.Point(0, -7), // origin
-                    anchor: new google.maps.Point(0, 0) // anchor
-                };
-
-                var i = 0, markers = [];
-                $.each(lockers.slice(0, lockersCount), function (index, locker) {
-                    marker = new googleMaps.Marker({
-                        position: locker.coordinates,
-                        map: map,
-                        title: locker.building_no,
-                        label: String(i + 1),
-                        icon: icon
-                    });
-                    markers.push(marker);
-
-                    var onclick = 'jQuery(".point[data-id=' + locker.id + '] button.select").trigger("click");';
-                    var contentString = "<div class='info-window'>" +
-                        "<div class='title'>" +
-                        "<h5 class='info-window-name'>" + (i + 1) + ' - ' + locker.building_no + "</h5>" +
-                        "<p class='right'>" + self.precisionRound(locker.distance, 2) + " miles</p>" +
-                        "</div>" +
-                        "<div class='info-window-address'><p>" + locker.province + "</p><p>" + locker.city + ", " + locker.post_code + "</p></div>" +
-                        "<button row-id=" + locker.id + " class='button' onclick='" + onclick + "'>Select</button>" +
-                        "</div>";
-
-                    /*$('.point[data-id='+ locker.id +'] .select').trigger('click')*/
-                    var infoWindow = new googleMaps.InfoWindow({
-                        content: contentString,
-                        maxWidth: 250
-                    });
-
-                    googleMaps.event.addListener(marker, 'click', (function (marker) {
-                        return function () {
-                            if (window.infowindow) {
-                                window.infowindow.close();
-                            }
-                            $('.point').removeClass('active');
-                            $('.point[data-id=' + locker.id + ']').addClass('active');
-                            infoWindow.open(map, marker);
-                            map.setCenter(marker.getPosition());
-                            $('.info-window button').on('click', function () {
-                                $('.point[data-id=' + $(this).attr('row-id') + '] button.select').trigger('click');
-                            });
-                            window.infowindow = infoWindow;
-                        }
-                    })(marker));
-                    i++;
-                });
-
-                var centerIcon = {
-                    url: window.centerIcon
-                };
-
-                var centerMarker = new google.maps.Marker({
-                    position: initLocation,
-                    icon: centerIcon
-                });
-
-                markers.push(centerMarker);
-
-                var markerCluster = new MarkerClusterer(
-                    map,
-                    markers,
-                    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'}
-                );
-            }
-            google.maps.event.trigger(map, 'resize')
-        },
-
-        findPostcode: function (element, event) {
-            var self = this,
-                shippingAddress = quote.shippingAddress(),
-                geoCoder = new googleMaps.Geocoder(),
-                geoRequestData,
-                location,
-                payload,
-                storageData;
-            if (event) {
-                event.stopPropagation();
-            }
-            $('#load-overlay').show();
-            lockersCount = 5;
-            var postCodeInputValue = document.getElementById('lockers-postcode').value;
-            if (postCodeInputValue != '' && postCodeInputValue != self.defaultPostCode()) {
-                var country = window.defaultCountry;
-                if (shippingAddress.postcode != null) {
-                    country = shippingAddress.countryId;
-                }
-                geoRequestData = [postCodeInputValue, 'United Kingdom'];
-            } else {
-                geoRequestData = [self.defaultPostCode(), 'United Kingdom'];
-            }
-            geoCoder.geocode({'address': geoRequestData.join(', ')}, function (results, status) {
-                if (status === 'OK') {
-                    if (results.length) {
-                        location = results[0].geometry.location;
-                        payload = {
-                            coordinate: {
-                                'latitude': location.lat(),
-                                'longitude': location.lng()
-                            }
-                        };
-
-                        storage.post(
-                            resourceUrlManager.getUrl({'default': '/inpost/find-machines-by-coordinate'}, {}),
-                            JSON.stringify(payload)
-                        ).done(
-                            function (response) {
-                                window.localStorage.setItem(geoRequestData.join(', '), JSON.stringify({
-                                    location: location,
-                                    response: response
-                                }));
-                                window.localStorage.setItem('geoRequestData', geoRequestData.join(', '));
-                                initLocation = location;
-                                lockers = response;
-                                self.reloadLeft();
-                                self.reloadMap();
-                                $('#load-overlay').hide();
-                            }
-                        ).fail(
-                            function (response) {
-                                console.log('Error', response);
-                                $('#load-overlay').hide();
-                            }
-                        );
-                    } else {
-                        console.error('Geocode returns empty result');
-                        $('#load-overlay').hide();
-                    }
-                } else {
-                    console.error('Geocode was not successful for the following reason: ' + status);
-                    $('#load-overlay').hide();
-                }
             });
-        },
-
-        reloadLeft: function () {
-            var self = this;
-            var geoRequestData = window.localStorage.getItem('geoRequestData');
-            var lockerFromCache = window.localStorage.getItem(geoRequestData);
-            if (lockerFromCache) {
-                lockerFromCache = JSON.parse(lockerFromCache);
-                if (lockersCount >= lockerFromCache.response.length) {
-                    self.showMoreAllowed(false);
-                } else {
-                    self.showMoreAllowed(true);
-                }
-                if ($(window).width() < 750) {
-                    self.isMobile(true);
-                } else {
-                    self.isMobile(false);
-                }
-                initLocation = lockerFromCache.location;
-                lockers = lockerFromCache.response.slice(0, lockersCount);
-                self.lockers(lockerFromCache.response.slice(0, lockersCount));
-                self.lockersCount(lockerFromCache.response.length);
-            }
-        },
-
-        getPostCode: function () {
-            var shippingAddress = quote.shippingAddress();
-            if (!shippingAddress.postcode) {
-                return this.defaultPostCode();
-            }
-            return shippingAddress.postcode;
-        },
-
-        reloadPopup: function () {
-            var self = this;
-            lockersCount = 5;
-            self.reloadLeft();
-            self.reloadMap();
-        },
-
-        showMore: function () {
-            var self = this;
-            lockersCount = lockersCount + 5;
-            self.reloadLeft();
-            self.reloadMap();
-        },
-
-        toggleAccessible: function (elementId) {
-            $('.point[data-id="' + elementId + '"] .hours').toggleClass('active');
-        },
-
-        imageExists: function (elementId) {
-            $.ajax({
-                url: 'https://geowidget.easypack24.net/uploads/uk/images/' + elementId + '.jpg',
-                type: 'HEAD',
-                crossDomain: true,
-                success: function () {
-                    return true;
-                },
-                error: function (data, textStatus, xhr) {
-                    return false
-                }
-            });
-        },
-
-        getLoaderImage: function () {
-            return window.loadIcon;
-        },
-
-        getMobileShowMoreImage: function () {
-            return window.showMoreIcon;
+            this.points(points);
+            self.initializeGMap(defaultLocation.lat, defaultLocation.lng, markersPosition[0].location.lat, markersPosition[0].location.lng);
         }
     });
 });

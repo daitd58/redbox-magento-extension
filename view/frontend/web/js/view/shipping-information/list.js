@@ -16,7 +16,7 @@ define([
     var defaultRendererTemplate = {
         parent: '${ $.$data.parentName }',
         name: '${ $.$data.name }',
-        component: 'Inpost_Lockers/js/view/shipping-information/address-renderer/inpost'
+        component: 'Redbox_Shipping/js/view/shipping-information/address-renderer/redbox'
     };
 
     return Component.extend({
@@ -106,15 +106,15 @@ define([
                         });
                     }
 
-                    if (!address.extensionAttributes.hasOwnProperty('lockerMachine')) {
-                        Object.defineProperty(address.extensionAttributes, 'lockerMachine', {
+                    if (!address.extensionAttributes.hasOwnProperty('point_id')) {
+                        Object.defineProperty(address.extensionAttributes, 'point_id', {
                             writable: true,
                             enumerable: true,
                             configurable: true
                         });
                     }
 
-                    address.extensionAttributes.lockerMachine = locker.id;
+                    address.extensionAttributes.point_id = locker.id;
                 }
             }
             return address;

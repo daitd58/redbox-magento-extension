@@ -10,19 +10,13 @@ var config = {
     config: {
         mixins: {
             'Magento_Checkout/js/view/shipping': {
-                'Inpost_Lockers/js/view/shipping/mixin': true
-            },
-            'Magento_Ui/js/lib/validation/validator': {
-                'Inpost_Lockers/js/validator-mixin': true
-            },
-            'Magento_Paypal/order-review': {
-                'Inpost_Lockers/js/paypal/order-review/mixin': true
+                'Redbox_Shipping/js/view/shipping/mixin': true
             }
         }
     },
     map: {
         '*': {
-            'Magento_Checkout/js/view/shipping-information/list': 'Inpost_Lockers/js/view/shipping-information/list'
+            'Magento_Checkout/js/view/shipping-information/list': 'Redbox_Shipping/js/view/shipping-information/list'
         }
     }
 };

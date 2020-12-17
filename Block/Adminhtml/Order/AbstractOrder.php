@@ -9,73 +9,82 @@
 
 namespace Redbox\Shipping\Block\Adminhtml\Order;
 
-use Redbox\Shipping\Api\Checkout\AddressRepositoryInterface;
+use Magento\Backend\Block\Template\Context;
+use Magento\Framework\Registry;
+use Magento\Sales\Helper\Admin;
+use Redbox\Shipping\Api\Data\AddressRepositoryInterface;
 
 class AbstractOrder extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 {
 
-    public $addressRepository;
+    public $pointId;
+    public $order;
     public $quoteFactory;
-    public $machineCollection;
-    public $locker;
+    public $addressRepository;
+    public $shippingAddress;
 
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Sales\Helper\Admin $adminHelper,
+        Context $context,
+        Registry $registry,
+        Admin $adminHelper,
         AddressRepositoryInterface $addressRepository,
         \Magento\Quote\Model\QuoteFactory $quoteFactory,
-        \Redbox\Shipping\Model\ResourceModel\Machine\DataCollection $machineCollection,
-        array $data = []
+        array $data=[]
     ) {
-    
-        $this->_adminHelper = $adminHelper;
+        $this->_adminHelper  = $adminHelper;
         $this->_coreRegistry = $registry;
         $this->quoteFactory = $quoteFactory;
-        $this->machineCollection = $machineCollection;
         $this->addressRepository = $addressRepository;
         parent::__construct($context, $registry, $adminHelper, $data);
-    }
 
-    public function isShippingInpost()
+    }//end __construct()
+
+
+    public function isShippingRedbox()
     {
-        $order = $this->getOrder();
-        if ($order->getId()) {
-            if ($order->getShippingMethod() == 'redbox_shipping') {
-                $quote = $this->quoteFactory->create()->loadByIdWithoutStore($order->getQuoteId());
+        $this->order = $this->getOrder();
+        if ($this->order->getId()) {
+            if ($this->order->getShippingMethod() == 'redbox_redbox') {
+                $quote = $this->quoteFactory->create()->loadByIdWithoutStore($this->order->getQuoteId());
+                $this->shippingAddress = $this->order->getShippingAddress();
                 $quoteAddressId = $quote->getShippingAddress()->getId();
                 if ($quoteAddressId) {
-                    $lockerId = $this->addressRepository->getByQuoteAddressId($quoteAddressId)->getLockerMachine();
-                    $locker = $this->machineCollection
-                        ->addFieldToFilter('id', ['eq' => $lockerId])
-                        ->setPageSize(1, 1)
-                        ->getLastItem();
-                    if ($locker->getId()) {
-                        $this->locker = $locker;
+                    $this->pointId = $this->addressRepository->getByQuoteAddressId($quoteAddressId)->getPointId();
+                    if ($this->pointId) {
                         return true;
                     }
                 }
+                return true;
             }
         }
+
         return false;
-    }
 
-    public function getLocker()
-    {
-        return $this->locker;
-    }
+    }//end isShippingRedbox()
 
-    public function getLockerAddress()
+
+    public function getPointId()
     {
-        if ($this->locker) {
+        return $this->pointId;
+
+    }//end getPoint()
+
+
+    public function getPointAddress()
+    {
+        if ($this->pointId) {
             return sprintf(
                 '%s, %s, %s, %s',
-                $this->locker->getData('building_no'),
-                $this->locker->getStreet(),
-                $this->locker->getCity(),
-                $this->locker->getPostCode()
+                $this->shippingAddress->getStreet()[0],
+                $this->shippingAddress->getCompany(),
+                $this->shippingAddress->getCity(),
+                $this->shippingAddress->getPostCode()
             );
         }
+
         return '';
-    }
-}
+
+    }//end getPointAddress()
+
+
+}//end class

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+  * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
@@ -12,6 +12,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
     <!-- Additional attribute used during save quote shipping address request -->
     <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">
-        <attribute code="locker_machine" type="string" />
+        <attribute code="point_id" type="string" />
     </extension_attributes>
 </config>

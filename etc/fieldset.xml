@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+  * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
@@ -13,7 +13,7 @@
         xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Object/etc/fieldset.xsd">
     <scope id="global">
         <fieldset id="sales_convert_quote">
-            <field name="locker_id">
+            <field name="point_id">
                 <aspect name="to_order" />
             </field>
         </fieldset>

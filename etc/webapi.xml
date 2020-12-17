@@ -10,8 +10,8 @@
 -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
-    <route url="/V1/redbox/get-points" method="POST">
-        <service class="Redbox\Shipping\Api\ServiceInterface" method="getPoints"/>
+    <route url="/V1/redbox/get-points" method="GET">
+        <service class="Redbox\Shipping\Api\PointServiceInterface" method="getPoints"/>
         <resources>
             <resource ref="anonymous" />
         </resources>

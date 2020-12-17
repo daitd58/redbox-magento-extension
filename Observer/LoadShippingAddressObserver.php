@@ -1,6 +1,6 @@
 <?php
 /**
- * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+  * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
@@ -9,17 +9,17 @@
 
 namespace Redbox\Shipping\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Quote\Model\Quote\Address;
-use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Api\Data\AddressExtensionInterface;
 use Magento\Quote\Api\Data\AddressExtensionInterfaceFactory;
-use Redbox\Shipping\Model\Carrier\Inpost as Carrier;
-use Redbox\Shipping\Api\Checkout\AddressRepositoryInterface;
-use Redbox\Shipping\Api\Data\Checkout\AddressInterface;
-use Redbox\Shipping\Api\Data\Checkout\AddressInterfaceFactory;
+use Magento\Quote\Api\Data\ShippingAssignmentInterface;
+use Magento\Quote\Model\Quote\Address;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use Redbox\Shipping\Api\Data\AddressRepositoryInterface;
+use Redbox\Shipping\Api\Data\AddressInterface;
+use Redbox\Shipping\Model\Carrier\Redbox as Carrier;
 
 /**
  * Class LoadShippingAddressObserver
@@ -33,28 +33,25 @@ class LoadShippingAddressObserver implements ObserverInterface
     private $addressRepository;
 
     /**
-     * @var AddressInterfaceFactory
-     */
-    private $addressFactory;
-
-    /**
      * @var AddressExtensionInterfaceFactory
      */
     private $addressExtensionFactory;
 
+    private $logger;
+
     /**
      * SaveCheckoutFieldsObserver constructor.
      * @param AddressRepositoryInterface $addressRepository
-     * @param AddressInterfaceFactory $addressFactory
      * @param AddressExtensionInterfaceFactory $addressExtensionFactory
      */
     public function __construct(
         AddressRepositoryInterface $addressRepository,
-        AddressInterfaceFactory $addressFactory,
-        AddressExtensionInterfaceFactory $addressExtensionFactory
+        AddressExtensionInterfaceFactory $addressExtensionFactory,
+        PsrLoggerInterface $logger
     ) {
+        $this->logger = $logger;
+        $this->logger->info('LoadShippingAddressObserver------');
         $this->addressRepository = $addressRepository;
-        $this->addressFactory = $addressFactory;
         $this->addressExtensionFactory = $addressExtensionFactory;
     }
 
@@ -67,6 +64,7 @@ class LoadShippingAddressObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        $this->logger->info('LoadShippingAddressObserver------');
         if ($observer->hasData('shipping_assignment')) {
             /** @var ShippingAssignmentInterface $shippingAssignment */
             $shippingAssignment = $observer->getData('shipping_assignment');
@@ -77,14 +75,14 @@ class LoadShippingAddressObserver implements ObserverInterface
 
         /** @var Address $quoteAddress */
         if (!$quoteAddress || $quoteAddress->getAddressType() !== Address::ADDRESS_TYPE_SHIPPING
-            || $quoteAddress->getShippingMethod() !== Carrier::CODE . '_' . Carrier::METHOD
+            || $quoteAddress->getShippingMethod() !== Carrier::CODE . '_' . Carrier::CODE
         ) {
             return;
         }
 
         try {
-            /** @var AddressInterface $lockerAddress */
-            $lockerAddress = $this->addressRepository->getByQuoteAddressId($quoteAddress->getId());
+            /** @var AddressInterface $address */
+            $address = $this->addressRepository->getByQuoteAddressId($quoteAddress->getId());
         } catch (NoSuchEntityException $e) {
             return;
         }
@@ -94,7 +92,7 @@ class LoadShippingAddressObserver implements ObserverInterface
             $extensionAttributes = $this->addressExtensionFactory->create();
         }
 
-        $extensionAttributes->setLockerMachine($lockerAddress->getLockerMachine());
+        $extensionAttributes->setPointId($address->getPointId());
         $quoteAddress->setExtensionAttributes($extensionAttributes);
     }
 }

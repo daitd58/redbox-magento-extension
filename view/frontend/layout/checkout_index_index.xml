@@ -11,11 +11,12 @@
 
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="checkout" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <css src="Inpost_Lockers::css/lockers.css" />
+        <css src="Redbox_Shipping::css/style.css" />
+        <css src="Redbox_Shipping::css/fontawesome.css" />
     </head>
     <body>
         <referenceContainer name="after.body.start">
-            <block class="Redbox\Shipping\Block\MapsJs" name="inpost.maps.js" template="Inpost_Lockers::maps_js.phtml"/>
+            <block class="Redbox\Shipping\Block\Maps" name="redbox.maps.js" template="Redbox_Shipping::maps.phtml"/>
         </referenceContainer>
         <referenceBlock name="checkout.root">
             <arguments>
@@ -29,10 +30,10 @@
                                             <item name="children" xsi:type="array">
                                                 <item name="shippingAddress" xsi:type="array">
                                                     <item name="config" xsi:type="array">
-                                                        <item name="shippingMethodItemTemplate" xsi:type="string">Inpost_Lockers/shipping-method-item</item>
+                                                        <item name="shippingMethodItemTemplate" xsi:type="string">Redbox_Shipping/shipping-method-item</item>
                                                     </item>
                                                     <item name="children" xsi:type="array">
-                                                        <item name="inpost-shipping-method" xsi:type="array">
+                                                        <item name="redbox-shipping-method" xsi:type="array">
                                                             <item name="config" xsi:type="array">
                                                                 <item name="deps" xsi:type="array">
                                                                     <item name="0" xsi:type="string">checkout.steps.shipping-step.step-config</item>
@@ -58,35 +59,25 @@
                                                                     </item>
                                                                 </item>
                                                                 <item name="methodCode" xsi:type="helper" helper="Redbox\Shipping\Helper\Data::getMethodCode"/>
-                                                                <item name="searchMachineUrl" xsi:type="string">/inpost/find-machines-by-coordinate</item>
+                                                                <item name="searchMachineUrl" xsi:type="string">/redbox/get-points</item>
                                                             </item>
-                                                            <item name="component" xsi:type="string">Inpost_Lockers/js/view/locker</item>
-                                                            <item name="displayArea" xsi:type="string">inpost-shipping-method</item>
+                                                            <item name="component" xsi:type="string">Redbox_Shipping/js/view/point</item>
+                                                            <item name="displayArea" xsi:type="string">redbox-shipping-method</item>
                                                             <item name="provider" xsi:type="string">checkoutProvider</item>
                                                             <item name="sortOrder" xsi:type="string">10</item>
                                                             <item name="children" xsi:type="array">
-                                                                <item name="inpost-shipping-map" xsi:type="string">Inpost_Lockers/js/view/map</item>
+                                                                <item name="redbox-shipping-map" xsi:type="string">Redbox_Shipping/js/view/map</item>
                                                             </item>
                                                         </item>
                                                         <item name="before-shipping-method-form" xsi:type="array">
                                                             <item name="children" xsi:type="array">
-                                                                <item name="inpost-lockers-map" xsi:type="array">
+                                                                <item name="redbox-lockers-map" xsi:type="array">
                                                                     <item name="config" xsi:type="array">
-                                                                        <item name="template" xsi:type="string">Inpost_Lockers/locker/map</item>
+                                                                        <item name="template" xsi:type="string">Redbox_Shipping/point/map</item>
                                                                     </item>
-                                                                    <item name="component" xsi:type="string">Inpost_Lockers/js/view/map</item>
-                                                                    <item name="displayArea" xsi:type="string">inpost-lockers-map</item>
+                                                                    <item name="component" xsi:type="string">Redbox_Shipping/js/view/map</item>
+                                                                    <item name="displayArea" xsi:type="string">redbox-lockers-map</item>
                                                                     <item name="sortOrder" xsi:type="string">10</item>
-                                                                </item>
-                                                            </item>
-                                                        </item>
-                                                        <item name="shipping-address-fieldset" xsi:type="array">
-                                                            <item name="children" xsi:type="array">
-                                                                <!-- the field you are customizing -->
-                                                                <item name="telephone" xsi:type="array">
-                                                                    <item name="validation" xsi:type="array">
-                                                                        <item name="phoneINPOST" xsi:type="string">true</item>
-                                                                    </item>
                                                                 </item>
                                                             </item>
                                                         </item>

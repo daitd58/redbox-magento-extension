@@ -1,6 +1,6 @@
 <?php
 /**
- * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+ * (c) RedboxSA Parcel Lockers <thamer@redboxsa.com>
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
@@ -41,10 +41,10 @@ endif; ?>
             <?= /* @noEscape */ __('No shipping information available') ?>
         <?php endif; ?>
 
-        <?php if ($block->isShippingInpost()) : ?>
+        <?php if ($block->isShippingRedbox()) : ?>
             <ul style="list-style: none; padding-top: 20px;">
-                <li>Locker ID: <?php /* @noEscape */ echo $block->getLocker()->getData('id') ?></li>
-                <li>Locker address: <?php /* @noEscape */ echo $block->getLockerAddress() ?></li>
+                <li>Point ID: <?php /* @noEscape */ echo $block->getPointId() ?></li>
+                <li>Point address: <?php /* @noEscape */ echo $block->getPointAddress() ?></li>
             </ul>
         <?php endif; ?>
     </div>

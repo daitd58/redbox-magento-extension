@@ -1,6 +1,6 @@
 <?php
 /**
- * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+  * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
  * This source file is subject to the license that is bundled
  * with this source code in the file LICENSE.
  *
@@ -9,16 +9,17 @@
 
 namespace Redbox\Shipping\Observer;
 
-use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Quote\Model\Quote\Address;
-use Redbox\Shipping\Model\Carrier\Inpost as Carrier;
-use Redbox\Shipping\Api\Checkout\AddressRepositoryInterface;
-use Redbox\Shipping\Api\Data\Checkout\AddressInterface;
-use Redbox\Shipping\Api\Data\Checkout\AddressInterfaceFactory;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use Redbox\Shipping\Api\Data\AddressRepositoryInterface;
+use Redbox\Shipping\Model\Carrier\Redbox as Carrier;
+use Redbox\Shipping\Api\Data\AddressInterfaceFactory;
 
 /**
  * Class SaveShippingAddressObserver
@@ -26,6 +27,7 @@ use Redbox\Shipping\Api\Data\Checkout\AddressInterfaceFactory;
  */
 class SaveShippingAddressObserver implements ObserverInterface
 {
+
     /**
      * @var AddressRepositoryInterface
      */
@@ -36,21 +38,24 @@ class SaveShippingAddressObserver implements ObserverInterface
      */
     private $addressFactory;
 
-    /** @var \Magento\Framework\App\RequestInterface  */
+    /** @var RequestInterface  */
     private $request;
+
+    private $logger;
 
     /**
      * SaveShippingAddressObserver constructor
-     *
      * @param AddressRepositoryInterface $addressRepository
-     * @param AddressInterfaceFactory $addressFactory
+     * @param RequestInterface $request
      */
     public function __construct(
         AddressRepositoryInterface $addressRepository,
+        RequestInterface $request,
         AddressInterfaceFactory $addressFactory,
-        \Magento\Framework\App\RequestInterface $request
+        PsrLoggerInterface $logger
     ) {
-    
+        $this->logger = $logger;
+        $this->logger->info('SaveShippingAddressObserver------');
         $this->addressRepository = $addressRepository;
         $this->addressFactory = $addressFactory;
         $this->request = $request;
@@ -67,41 +72,33 @@ class SaveShippingAddressObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        $this->logger->info('SaveShippingAddressObserver------');
         /** @var Address $quoteAddress */
         $quoteAddress = $observer->getData('quote_address');
 
         if ($quoteAddress->getAddressType() !== Address::ADDRESS_TYPE_SHIPPING
-            || $quoteAddress->getShippingMethod() !== Carrier::CODE . '_' . Carrier::METHOD
+            || $quoteAddress->getShippingMethod() !== Carrier::CODE . '_' . Carrier::CODE
         ) {
             return;
         }
 
-        if ($this->request->getParam('paypal_express')) {
-            $lockerId = $this->request->getParam('locker_id');
-            if (!$lockerId) {
-                throw new LocalizedException(__('Please, select locker machine'));
-            }
-        } else {
-            if (!$quoteAddress->getExtensionAttributes()
-                || !$quoteAddress->getExtensionAttributes()->getLockerMachine()
-            ) {
-                if ($this->addressRepository->getByQuoteAddressId($quoteAddress->getId())->getId()) {
-                    return true;
-                }
-                throw new LocalizedException(__('Please, select locker machine'));
-            }
-            $extensionAttributes = $quoteAddress->getExtensionAttributes();
-            $lockerId = $extensionAttributes->getLockerMachine();
+        if (!$quoteAddress->getExtensionAttributes()
+            || !$quoteAddress->getExtensionAttributes()->getPointId()
+        ) {
+            return;
         }
+        $extensionAttributes = $quoteAddress->getExtensionAttributes();
+        $pointId = $extensionAttributes->getPointId();
+        $this->logger->info('$pointId------' . $pointId);
 
         try {
-            $lockerAddress = $this->addressRepository->getByQuoteAddressId($quoteAddress->getId());
+            $address = $this->addressRepository->getByQuoteAddressId($quoteAddress->getId());
         } catch (NoSuchEntityException $e) {
-            $lockerAddress = $this->addressFactory->create();
-            $lockerAddress->setShippingAddressId($quoteAddress->getId());
+            $address = $this->addressFactory->create();
+            $address->setShippingAddressId($quoteAddress->getId());
         }
 
-        $lockerAddress->setLockerMachine($lockerId);
-        $this->addressRepository->save($lockerAddress);
+        $address->setPointId($pointId);
+        $this->addressRepository->save($address);
     }
 }

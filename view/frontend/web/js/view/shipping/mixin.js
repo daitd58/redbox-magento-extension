@@ -10,7 +10,7 @@ define([
     'mage/translate',
     'Magento_Checkout/js/model/quote',
     'Magento_Ui/js/model/messageList',
-    'Inpost_Lockers/js/view/locker',
+    'Redbox_Shipping/js/view/point',
     'ko',
     'jquery',
     'Magento_Checkout/js/action/select-shipping-address'
@@ -18,7 +18,7 @@ define([
     translate,
     quote,
     messageList,
-    locker,
+    point,
     ko,
     $,
     selectShippingAddress
@@ -35,71 +35,42 @@ define([
          */
         validateShippingInformation: function () {
             var shippingAddress = quote.shippingAddress(),
-                lockerAddress = this.getChild('inpost-shipping-method').selectedLockerAddress();
-
-            if (this.getChild('inpost-shipping-method').showPhoneField()) {
-                var phone = document.getElementById('inpost-phone').value;
-                if (!phone) {
-                    this.showError();
-                    return false;
-                }
-                var patt = new RegExp(/^((((\+|00)?447\s?\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3})|(((\+|00)447\s?\d{2}|\(?07\d{2}\)?)\s?\d{3}\s?\d{4})|(((\+|00)447\s?\d{1}|\(?07\d{1}\)?)\s?\d{4}\s?\d{4}))(\s?\#(\d{4}|\d{3}))?$/);
-                var res = patt.test(phone);
-                if (!res) {
-                    this.showError();
-                    return false;
-                }
-
-                quote.shippingAddress().telephone = phone;
-                $.ajax({
-                    url: window.inpostPhoneUpdateUrl,
-                    type: 'post',
-                    data: {
-                        'phone': phone,
-                        'quote_id': quote.getQuoteId()
-                    }
-                });
-            }
+                pointAddress = this.getChild('redbox-shipping-method').selectedPointAddress();
             this.lockerErrors('');
-            var hasLockerMachine = shippingAddress.hasOwnProperty('extensionAttributes') &&
+            var hasPointId = shippingAddress.hasOwnProperty('extensionAttributes') &&
                 typeof shippingAddress.extensionAttributes === 'object' &&
-                shippingAddress.extensionAttributes.hasOwnProperty('lockerMachine') &&
-                !!shippingAddress.extensionAttributes.lockerMachine;
+                shippingAddress.extensionAttributes.hasOwnProperty('point_id') &&
+                !!shippingAddress.extensionAttributes.point_id;
 
             if (!this._super()) {
                 return false;
             }
-            if (quote.shippingMethod().carrier_code === locker().methodCode) {
-                var selectedLocker = JSON.parse(window.localStorage.getItem('selected_locker'));
-                if (!hasLockerMachine || !selectedLocker) {
-                    this.lockerErrors('Please choose InPost Locker.');
+            if (quote.shippingMethod().carrier_code === point().methodCode) {
+                var selectedPoint = JSON.parse(window.localStorage.getItem('selected_point'));
+                if (!hasPointId || !selectedPoint) {
+                    this.lockerErrors('Please choose Redbox point.');
                     return false;
                 }
-                this.getChild('inpost-shipping-method').selectedLockerAddress(lockerAddress);
-                quote.shippingAddress().extensionAttributes.lockerMachine = selectedLocker.id;
+                this.getChild('redbox-shipping-method').selectedPointAddress(pointAddress);
+                quote.shippingAddress().extensionAttributes.point_id = selectedPoint.id;
             } else {
                 if (shippingAddress.hasOwnProperty('extensionAttributes') &&
                     typeof shippingAddress.extensionAttributes === 'object' &&
-                    shippingAddress.extensionAttributes.hasOwnProperty('lockerMachine')) {
-                    shippingAddress.extensionAttributes.lockerMachine = null;
+                    shippingAddress.extensionAttributes.hasOwnProperty('point_id')) {
+                    shippingAddress.extensionAttributes.point_id = null;
                 }
-                if (window.localStorage.getItem('selected_locker')) {
-                    window.localStorage.removeItem('selected_locker');
+                if (window.localStorage.getItem('selected_point')) {
+                    window.localStorage.removeItem('selected_point');
                 }
             }
             return true;
         },
 
-
         selectShippingMethod: function (shippingMethod) {
-            if (shippingMethod.carrier_code == 'inpost') {
+            if (shippingMethod.carrier_code === 'redbox') {
                 $('.choose-locker').trigger('click');
             }
             return this._super();
-        },
-
-        showError: function() {
-            $('#advice-validate-uk-phone-locker-phone').show(0).delay(3600).hide(0);
         }
     };
 

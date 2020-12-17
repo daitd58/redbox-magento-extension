@@ -1,0 +1,29 @@
+<?php
+/**
+  * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+ * This source file is subject to the license that is bundled
+ * with this source code in the file LICENSE.
+ *
+ * Built by Redbox Technologies, <thamer@redboxsa.com>
+ */
+
+// @codingStandardsIgnoreFile
+?>
+
+<script>
+    require.config({
+        paths: {
+            googleMaps: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDeZ2O_NB6rLnIdYjzgk4hsvpuEZS_NR-E&sensor=false&libraries=places',
+            MarkerClusterer: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer'
+        },
+        shim: {
+            googleMaps: {
+                exports: 'google.maps'
+            },
+            MarkerClusterer: {
+                exports: 'MarkerClusterer'
+            }
+        }
+    });
+</script>
+<div></div>

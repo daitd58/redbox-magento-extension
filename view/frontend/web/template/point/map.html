@@ -1,0 +1,93 @@
+<!--
+/**
+ * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+ * This source file is subject to the license that is bundled
+ * with this source code in the file LICENSE.
+ *
+ * Built by Redbox Technologies, <thamer@redboxsa.com>
+ */
+-->
+
+<div id="lockers" class="lockers" style="display: none;">
+    <div class="form-group">
+        <div class="locker-id">
+            <div>Point</div>
+            <input type="text" name="locker_id" id="locker-id" style="display: none" />
+            <input type="text" name="locker_name" id="locker-name" readonly />
+        </div>
+    </div>
+    <div class="row redbox-map">
+        <div id="init-redbox" data-bind="click: initRedbox"></div>
+        <div class="col-md-8 modal_body_map">
+            <div class="area-map">
+                <div class="title-area">Pick nearest Redbox point from the map</div>
+                <div class="pac-card" id="pac-card"></div>
+                <div id="pac-container">
+                    <input id="pac-input" type="text" placeholder="Search">
+                    <i class="fa fa-search"></i>
+                </div>
+            </div>
+            <div class="location-map" id="location-map">
+                <div style="height: 400px;" id="map"></div>
+            </div>
+        </div>
+        <div class="col-md-4 list-point" id="list-point">
+            <!-- ko foreach: { data: points(), as: 'item'} -->
+            <div class="per-point" data-bind="attr: {'value-id': item.id}">
+                <div class="icon-block">
+                    <div class="a-icon">
+                        <img data-bind="attr: {'src': item.icon}">
+                    </div>
+                    <div class="a-content">
+                        <div class="name1" data-bind="text: item.host_name_en"></div>
+                        <div class="name2" data-bind="text: item.point_name"></div>
+                    </div>
+                </div>
+                <div class="icon-block">
+                    <div class="a-icon"><i class="fa fa-map-marker"></i></div>
+                    <div class="a-content">
+                        <span data-bind="text: item.address.street"></span> - <span data-bind="text: item.address.district"></span> - <span data-bind="text: item.address.city"></span>
+                    </div>
+                </div>
+                <div class="icon-block">
+                    <div class="a-icon"><i class="fa fa-clock-o"></i></div>
+                    <div class="a-content" data-bind="text: item.open_hour"></div>
+                </div>
+                <div class="icon-block">
+                    <div class="a-icon"><i class="fa fa-database"></i></div>
+                    <div class="a-content">Accept payment: <span data-bind="if: (item.lockers.length && item.lockers[0].accept_payment)">Yes</span><span data-bind="if: (!item.lockers.length || !item.lockers[0].accept_payment)">No</span></div>
+                </div>
+                <div class="icon-block">
+                    <div class="a-icon"><i class="fa fa-truck"></i></div>
+                    <div class="a-content">Estimate time delivery: <span data-bind="text: item.estimateTime"></span>H</div>
+                </div>
+                <!-- ko if: item.is_public === false -->
+                <div class="popup-confirm-access-restricted-area">
+                    <b class="css-restricted-access">Restricted access:</b>
+                    <span data-bind="text: item.alert_message.en"></span>
+                    <div class="tem-css">
+                        <div class="checkbox pd-0">
+                            <label data-bind="attr: {for: item.id + '-restricted-access'}">
+                                <input
+                                    class="each-permission-js"
+                                    type="checkbox"
+                                    data-bind="attr: {id: item.id + '-restricted-access'}, event: { change: $parent.confirmCanAccessThisLocation.bind($parent) }"
+                                />
+                                I confirm that i have access to this localtion
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="area-icon-control-popup-prev">
+                    <i class="fa fa-times" data-bind="click: $parent.controlPopupWarningRestricted"></i>
+                </div>
+                <!-- /ko -->
+                <div class="area-select-point">
+                    <button data-bind="click: $parent.pickPoint.bind($parent, item.id), attr: {class: item.is_public ? 'asp-not-disabled' : 'asp-not-disabled disabled', disabled: !item.is_public}">SELECT LOCKER</button>
+                    <span class="selected-point"><i class="fa fa-check" aria-hidden="true"></i>Selected Point</span>
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+    </div>
+</div>

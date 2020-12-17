@@ -9,22 +9,29 @@
 
 namespace Redbox\Shipping\Block\Adminhtml\Shipping\View;
 
+use Magento\Backend\Block\Widget\Button;
+
 class Form extends \Magento\Shipping\Block\Adminhtml\View\Form
 {
+
+
     public function getCreateLabelButton()
     {
-        if ($this->getShipment()->getOrder()->getShippingMethod() !== 'redbox_shipping') {
+        if ($this->getShipment()->getOrder()->getShippingMethod() !== 'redbox_redbox') {
             $data['shipment_id'] = $this->getShipment()->getId();
-            $url = $this->getUrl('adminhtml/order_shipment/createLabel', $data);
+            $url                 = $this->getUrl('adminhtml/order_shipment/createLabel', $data);
             return $this->getLayout()->createBlock(
-                \Magento\Backend\Block\Widget\Button::class
+                Button::class
             )->setData(
                 [
-                    'label' => __('Create Shipping Label...'),
+                    'label'   => __('Create Shipping Label...'),
                     'onclick' => 'packaging.showWindow();',
-                    'class' => 'action-create-label'
+                    'class'   => 'action-create-label',
                 ]
             )->toHtml();
         }
-    }
-}
+
+    }//end getCreateLabelButton()
+
+
+}//end class

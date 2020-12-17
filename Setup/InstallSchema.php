@@ -9,194 +9,148 @@
 
 namespace Redbox\Shipping\Setup;
 
+use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\InstallSchemaInterface;
-use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
 
-class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
+/**
+ * Redbox Shipping InstallSchema class
+ *
+ * Class InstallSchema
+ */
+class InstallSchema implements InstallSchemaInterface
 {
+
+
+    /**
+     * Install schema
+     *
+     * @param SchemaSetupInterface   $setup
+     * @param ModuleContextInterface $context
+     */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        //Install schema logic
-        $installer = $setup;
-        $installer->startSetup();
-        if (!$installer->tableExists('redbox_locker')) {
-            $table = $installer->getConnection()->newTable(
-                $installer->getTable('redbox_locker')
-            )
-                ->addColumn(
-                    'locker_id',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                    null,
-                    [
-                        'identity' => true,
-                        'nullable' => false,
-                        'primary' => true,
-                        'unsigned' => true,
-                    ],
-                    'Increment ID'
-                )
-                ->addColumn(
-                    'id',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    255,
-                    ['nullable => false'],
-                    'Locker ID'
-                )
-                ->addColumn(
-                    'post_code',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    255,
-                    ['nullable => false'],
-                    'Post Code'
-                )
-                ->addColumn(
-                    'district',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    255,
-                    ['nullable => false'],
-                    'District'
-                )
-                ->addColumn(
-                    'street',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Street'
-                )
-                ->addColumn(
-                    'city',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'City'
-                )
-                ->addColumn(
-                    'location_type',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Location Type'
-                )
-                ->addColumn(
-                    'latitude',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_FLOAT,
-                    null,
-                    ['nullable => false'],
-                    'Latitude'
-                )
-                ->addColumn(
-                    'longitude',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_FLOAT,
-                    null,
-                    ['nullable => false'],
-                    'Longitude'
-                )
-                ->addColumn(
-                    'description',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Description'
-                )
-                ->addColumn(
-                    'open_hour',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Open Hour'
-                )
-                ->addColumn(
-                    'industry',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Industry'
-                )
-                ->addColumn(
-                    'status',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Status'
-                )
-                ->addColumn(
-                    'point_name',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Point Name'
-                )
-                ->addColumn(
-                    'host_name_en',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Host Name EN'
-                )
-                ->addColumn(
-                    'host_name_ar',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Host Name AR'
-                )
-                ->addColumn(
-                    'is_public',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
-                    null,
-                    ['nullable => false'],
-                    'Is Public'
-                )
-                ->addColumn(
-                    'accept_payment',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
-                    null,
-                    ['nullable => false'],
-                    'Accept Payment'
-                )
-                ->addColumn(
-                    'icon',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Icon'
-                )
-                ->addColumn(
-                    'alert_message_en',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Alert Message EN'
-                )
-                ->addColumn(
-                    'alert_message_ar',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    null,
-                    ['nullable => false'],
-                    'Alert Message AR'
-                )
-                ->addColumn(
-                    'estimate_time',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                    null,
-                    ['nullable => false'],
-                    'Estimate Time'
-                )
-                ->setComment('Lockers');
-            $installer->getConnection()->createTable($table);
+        $setup->startSetup();
+        $quoteTable = 'quote';
+        $orderTable = 'sales_order';
+        $setup->getConnection()->addColumn(
+            $setup->getTable($quoteTable),
+            'point_id',
+            [
+                'type'    => Table::TYPE_TEXT,
+                'length'  => 255,
+                'comment' => 'Point ID',
+            ]
+        );
 
-            $installer->getConnection()->addIndex(
-                $setup->getTable('redbox_locker'),
-                $setup->getIdxName(
-                    $installer->getTable('redbox_locker'),
-                    ['id'],
-                    \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_FULLTEXT
+        $setup->getConnection()->addColumn(
+            $setup->getTable($orderTable),
+            'point_id',
+            [
+                'type'    => Table::TYPE_TEXT,
+                'length'  => 255,
+                'comment' => 'Point ID',
+            ]
+        );
+
+        $table = $setup->getConnection()
+            ->newTable($setup->getTable('redbox_checkout_address'))
+            ->addColumn(
+                'entity_id',
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'identity' => true,
+                    'nullable' => false,
+                    'primary'  => true,
+                    'unsigned' => true
+                ],
+                'Entity ID'
+            )
+            ->addColumn(
+                'shipping_address_id',
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'nullable' => false
+                ],
+                'Quote Address ID'
+            )
+            ->addColumn('point_id', Table::TYPE_TEXT, 255, ['nullable' => false], 'Point Id')
+            ->addForeignKey(
+                $setup->getFkName(
+                    $setup->getTable('redbox_checkout_address'),
+                    'shipping_address_id',
+                    'quote_address',
+                    'address_id'
                 ),
-                ['id'],
-                \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_FULLTEXT
-            );
+                'shipping_address_id',
+                $setup->getTable('quote_address'),
+                'address_id',
+                Table::ACTION_CASCADE
+            )
+            ->setComment('Redbox Shipping Address Table');
+        $setup->getConnection()->createTable($table);
+
+        $setup->getConnection()->addIndex(
+            $setup->getTable('redbox_checkout_address'),
+            $setup->getIdxName(
+                'redbox_checkout_address',
+                ['entity_id']
+            ),
+            ['entity_id']
+        );
+
+        $data = [];
+        $statuses = [
+            'redbox_expired'  => __('Redbox Expired'),
+            'redbox_failed'  => __('Redbox Failed'),
+        ];
+        foreach ($statuses as $code => $info) {
+            $data[] = ['status' => $code, 'label' => $info];
         }
-        $installer->endSetup();
-    }
-}
+        $setup->getConnection()
+            ->insertArray($setup->getTable('sales_order_status'), ['status', 'label'], $data);
+
+        $states = [
+            'complete' => [
+                'label' => __('Complete'),
+                'statuses' => [
+                    'redbox_failed' => ['default' => '0']
+                ],
+                'visible_on_front' => true,
+            ],
+            'processing' => [
+                'label' => __('Processing'),
+                'statuses' => [
+                    'redbox_expired' => ['default' => '0']
+                ],
+                'visible_on_front' => true,
+            ]
+        ];
+
+        $data = [];
+        foreach ($states as $code => $info) {
+            if (isset($info['statuses'])) {
+                foreach ($info['statuses'] as $status => $statusInfo) {
+                    $data[] = [
+                        'status' => $status,
+                        'state' => $code,
+                        'is_default' => is_array($statusInfo) && isset($statusInfo['default']) ? 1 : 0,
+                    ];
+                }
+            }
+        }
+        $setup->getConnection()->insertArray(
+            $setup->getTable('sales_order_status_state'),
+            ['status', 'state', 'is_default'],
+            $data
+        );
+
+        $setup->endSetup();
+    }//end install()
+
+
+}//end class
