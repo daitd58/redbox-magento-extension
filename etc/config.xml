@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+ * This source file is subject to the license that is bundled
+ * with this source code in the file LICENSE.
+ *
+ * Built by Redbox Technologies, <thamer@redboxsa.com>
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <inpost>
+                <active>0</active>
+                <price>2.99</price>
+                <name>Redbox Shipping</name>
+                <title>Redbox Parcel Lockers</title>
+                <model>Redbox\Shipping\Model\Carrier\Inpost</model>
+                <type>I</type>
+                <sort_order>0</sort_order>
+                <debug>0</debug>
+                <description>Collection next day if ordered before 6pm, Sunday to Friday only.</description>
+            </inpost>
+        </carriers>
+    </default>
+</config>

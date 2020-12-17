@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+ * This source file is subject to the license that is bundled
+ * with this source code in the file LICENSE.
+ *
+ * Built by Redbox Technologies, <thamer@redboxsa.com>
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <route id="inpost_locker" frontName="locker">
+            <module name="Inpost_Lockers"/>
+        </route>
+    </router>
+</config>

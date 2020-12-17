@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+ * This source file is subject to the license that is bundled
+ * with this source code in the file LICENSE.
+ *
+ * Built by Redbox Technologies, <thamer@redboxsa.com>
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <type name="Redbox\Shipping\Cron\Machine">
+        <arguments>
+            <argument name="objectManager" xsi:type="object">Magento\Framework\ObjectManagerInterface</argument>
+            <argument name="helper" xsi:type="object">Redbox\Shipping\Helper\Lockers</argument>
+        </arguments>
+    </type>
+    <type name="Redbox\Shipping\Helper\Lockers">
+        <arguments>
+            <argument name="storeConfig" xsi:type="object">Magento\Framework\App\Config\ScopeConfigInterface</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Config\Model\Config">
+        <plugin name="admin_system_config_save_plugin" type="Redbox\Shipping\Plugin\ConfigPlugin" sortOrder="1"/>
+    </type>
+    
+    <preference for="Redbox\Shipping\Api\Data\MachineInterface" type="Redbox\Shipping\Model\Machine"/>
+    <preference for="Redbox\Shipping\Api\MachineRepositoryInterface" type="Redbox\Shipping\Model\MachineRepository"/>
+    <preference for="Redbox\Shipping\Api\Data\Checkout\AddressInterface" type="Redbox\Shipping\Model\Checkout\Address"/>
+    <preference for="Redbox\Shipping\Api\Checkout\AddressRepositoryInterface" type="Redbox\Shipping\Model\Checkout\AddressRepository"/>
+    <type name="Redbox\Shipping\Block\Adminhtml\Order\AbstractOrder">
+        <arguments>
+            <argument name="addressRepository" xsi:type="object">Redbox\Shipping\Api\Checkout\AddressRepositoryInterface</argument>
+            <argument name="quoteFactory" xsi:type="object">Magento\Quote\Model\QuoteFactory</argument>
+            <argument name="machineCollection" xsi:type="object">Redbox\Shipping\Model\ResourceModel\Machine\DataCollection</argument>
+        </arguments>
+    </type>
+
+    <type name="Redbox\Shipping\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Redbox\Shipping\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">inpostLockersLogger</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Redbox\Shipping\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <preference for="Magento\Sales\Block\Adminhtml\Order\AbstractOrder" type="Redbox\Shipping\Block\Adminhtml\Order\AbstractOrder"/>
+    <preference for="Magento\Shipping\Block\Adminhtml\View\Form" type="Redbox\Shipping\Block\Adminhtml\Shipping\View\Form"/>
+
+    <preference for="Magento\Framework\Filesystem\DriverInterface" type="\Magento\Framework\Filesystem\Driver\File"/>
+</config>

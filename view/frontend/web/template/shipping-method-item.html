@@ -1,0 +1,73 @@
+<!--
+/**
+ * (c) Redbox Parcel Lockers <thamer@redboxsa.com>
+ * This source file is subject to the license that is bundled
+ * with this source code in the file LICENSE.
+ *
+ * Built by Redbox Technologies, <thamer@redboxsa.com>
+ */
+-->
+
+<tr class="row" click="element.selectShippingMethod">
+    <td class="col col-method">
+        <input type="radio"
+               class="radio"
+               ifnot="method.error_message"
+               ko-checked="element.isSelected"
+               ko-value="method.carrier_code + '_' + method.method_code"
+               attr="'aria-labelledby': 'label_method_' + method.method_code + '_' + method.carrier_code + ' ' + 'label_carrier_' + method.method_code + '_' + method.carrier_code,
+                    'checked': element.rates().length == 1 || element.isSelected" />
+    </td>
+    <td class="col col-price">
+        <each args="element.getRegion('price')" render=""></each>
+    </td>
+    <td class="col col-method"
+        attr="'id': 'label_method_' +  method.method_code + '_' + method.carrier_code"
+        text="method.method_title"></td>
+    <td class="col col-carrier"
+        attr="'id': 'label_carrier_' + method.method_code + '_' + method.carrier_code"
+        text="method.carrier_title"></td>
+</tr>
+
+<tr class="locker" if="method.carrier_code === element.getChild('inpost-shipping-method').methodCode">
+    <td colspan="4" visible="element.getChild('inpost-shipping-method').isPopUpButtonVisible()">
+        <with args="element.getChild('inpost-shipping-method')">
+            <a href="#" style="display: none;" id="button-reset-selected-locker" click="resetSelectedLocker"/>
+            <div class="inpost-button-container" visible="isPopUpButtonVisible">
+                <p class="locker-help">
+                    (<span text="element.getChild('inpost-shipping-method').getDescription()"></span> <a href="#" id="inpostPopup" click="showFindOut">Find out more</a>)
+                </p>
+                <div class="locker-selected-info" data-bind="html: selectedLockerAddress">
+                </div>
+                <!-- ko if: selectedLockerAddress -->
+                    <a href="#" class="choose-locker" click="showLockersMap">Change Locker Location</a>
+                    <!-- ko if: element.getChild('inpost-shipping-method').showPhoneField() -->
+                        <div class="field inpost-phone _requiredF">
+                            <label name="telephone" class="label">Mobile <span class="grey">(InPost will text you when your parcel is ready)</span></label>
+                            <input class="input-text" data-bind="'aria-required': required, 'aria-invalid': error() ? true : 'false'," aria-required="true" type="text" id="inpost-phone" name="telephone" aria-required="true" aria-invalid="false">
+                            <div class="validation-advice" id="advice-validate-uk-phone-locker-phone" style="display: none;">Please provide your mobile phone number in this format 077 1234 5678</div>
+                        </div>
+                    <!-- /ko -->
+                <!-- /ko -->
+                <!-- ko ifnot: selectedLockerAddress -->
+                    <a href="#" class="choose-locker" click="showLockersMap">Choose locker</a>
+                <!-- /ko -->
+            </div>
+            <div class="validation-message">
+                <p text="element.lockerErrors"></p>
+            </div>
+        </with>
+    </td>
+</tr>
+
+<tr class="row row-error" if="method.error_message">
+    <td class="col col-error" colspan="4">
+        <div role="alert" class="message error">
+            <div text="method.error_message"></div>
+        </div>
+        <span class="no-display">
+            <input type="radio"
+                   attr="'value' : method.method_code, 'id': 's_method_' + method.method_code" />
+        </span>
+    </td>
+</tr>
