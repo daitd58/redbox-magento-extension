@@ -1,5 +1,5 @@
 {
-    "name": "redbox/parcel-lockers",
+    "name": "redboxsa/parcel-lockers",
     "description": "Redbox Shipping module implements service allowing visitors to send their parcels to their locker of choice nearby.",
     "require": {
         "magento/framework": ">=100.0.0"
@@ -16,5 +16,11 @@
         "psr-4": {
             "Redbox\\Shipping\\": ""
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/daitd58/redbox-magento-extension"
+        }
+    ]
 }
