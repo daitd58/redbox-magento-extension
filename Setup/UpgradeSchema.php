@@ -9,6 +9,9 @@
 
 namespace Redbox\Shipping\Setup;
 
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
+
 class UpgradeSchema implements \Magento\Framework\Setup\UpgradeSchemaInterface
 {
     /**
