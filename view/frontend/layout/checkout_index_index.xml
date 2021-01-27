@@ -46,6 +46,7 @@
                                                                         <item name="responsive" xsi:type="boolean">true</item>
                                                                         <item name="innerScroll" xsi:type="boolean">true</item>
                                                                         <item name="trigger" xsi:type="string">map</item>
+                                                                        <item name="modalClass" xsi:type="string">redbox-modal</item>
                                                                         <item name="buttons" xsi:type="array">
                                                                             <item name="save" xsi:type="array">
                                                                                 <item name="text" xsi:type="string" translate="true">Select Location</item>
@@ -79,6 +80,19 @@
                                                                     <item name="displayArea" xsi:type="string">redbox-lockers-map</item>
                                                                     <item name="sortOrder" xsi:type="string">10</item>
                                                                 </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                                <item name="payment" xsi:type="array">
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="additional-payment-validators" xsi:type="array">
+                                                            <item name="children" xsi:type="array">
+                                                                <!-- Declare your validation. START -->
+                                                                <item name="redboxValidation" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Redbox_Shipping/js/view/hasPoint</item>
+                                                                </item>
+                                                                <!-- Declare your validation. END -->
                                                             </item>
                                                         </item>
                                                     </item>

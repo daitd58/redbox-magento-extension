@@ -47,7 +47,13 @@ class SalesPlaceOrderAfter implements ObserverInterface
             $quoteAddressId = $quote->getShippingAddress()->getId();
             if ($quoteAddressId) {
                 $shippingAddress = $order->getShippingAddress();
-                $pointId = $this->addressRepository->getByQuoteAddressId($quoteAddressId)->getPointId();
+                try {
+                    /** @var AddressInterface $address */
+                    $address = $this->addressRepository->getByQuoteAddressId($quoteAddressId);
+                } catch (NoSuchEntityException $e) {
+                    return;
+                }
+                $pointId = $address->getPointId();
                 $apiToken   = $this->helper->getApiToken();
                 $url = 'https://app.redboxsa.com/api/business/v1/get-point-detail?point_id=' . $pointId;
 

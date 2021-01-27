@@ -97,8 +97,8 @@ define([
             if (locker) {
                 locker = JSON.parse(locker);
                 if (locker.hasOwnProperty('id')) {
-                    if (!address.hasOwnProperty('extensionAttributes')) {
-                        Object.defineProperty(address, 'extensionAttributes', {
+                    if (!address.hasOwnProperty('extension_attributes')) {
+                        Object.defineProperty(address, 'extension_attributes', {
                             value: {},
                             writable: true,
                             enumerable: true,
@@ -106,15 +106,15 @@ define([
                         });
                     }
 
-                    if (!address.extensionAttributes.hasOwnProperty('point_id')) {
-                        Object.defineProperty(address.extensionAttributes, 'point_id', {
+                    if (!address.extension_attributes.hasOwnProperty('point_id')) {
+                        Object.defineProperty(address.extension_attributes, 'point_id', {
                             writable: true,
                             enumerable: true,
                             configurable: true
                         });
                     }
 
-                    address.extensionAttributes.point_id = locker.id;
+                    address.extension_attributes.point_id = locker.id;
                 }
             }
             return address;

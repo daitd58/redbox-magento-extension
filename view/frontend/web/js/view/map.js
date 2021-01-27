@@ -195,8 +195,8 @@ define([
             window.localStorage.removeItem('selected_point');
             var address = quote.shippingAddress();
 
-            if (!address.hasOwnProperty('extensionAttributes')) {
-                Object.defineProperty(address, 'extensionAttributes', {
+            if (!address.hasOwnProperty('extension_attributes')) {
+                Object.defineProperty(address, 'extension_attributes', {
                     value: {},
                     writable: true,
                     enumerable: true,
@@ -204,15 +204,15 @@ define([
                 });
             }
 
-            if (!address.extensionAttributes.hasOwnProperty('point_id')) {
-                Object.defineProperty(address.extensionAttributes, 'point_id', {
+            if (!address.extension_attributes.hasOwnProperty('point_id')) {
+                Object.defineProperty(address.extension_attributes, 'point_id', {
                     writable: true,
                     enumerable: true,
                     configurable: true
                 });
             }
 
-            address.extensionAttributes.point_id = $.isEmptyObject(point) ? false : point.id;
+            address.extension_attributes.point_id = $.isEmptyObject(point) ? false : point.id;
             window.localStorage.setItem('selected_point', JSON.stringify(point));
             $('#button-reset-selected-locker').trigger('click');
         },

@@ -37,10 +37,10 @@ define([
             var shippingAddress = quote.shippingAddress(),
                 pointAddress = this.getChild('redbox-shipping-method').selectedPointAddress();
             this.lockerErrors('');
-            var hasPointId = shippingAddress.hasOwnProperty('extensionAttributes') &&
-                typeof shippingAddress.extensionAttributes === 'object' &&
-                shippingAddress.extensionAttributes.hasOwnProperty('point_id') &&
-                !!shippingAddress.extensionAttributes.point_id;
+            var hasPointId = shippingAddress.hasOwnProperty('extension_attributes') &&
+                typeof shippingAddress.extension_attributes === 'object' &&
+                shippingAddress.extension_attributes.hasOwnProperty('point_id') &&
+                !!shippingAddress.extension_attributes.point_id;
 
             if (!this._super()) {
                 return false;
@@ -52,12 +52,12 @@ define([
                     return false;
                 }
                 this.getChild('redbox-shipping-method').selectedPointAddress(pointAddress);
-                quote.shippingAddress().extensionAttributes.point_id = selectedPoint.id;
+                quote.shippingAddress().extension_attributes.point_id = selectedPoint.id;
             } else {
-                if (shippingAddress.hasOwnProperty('extensionAttributes') &&
-                    typeof shippingAddress.extensionAttributes === 'object' &&
-                    shippingAddress.extensionAttributes.hasOwnProperty('point_id')) {
-                    shippingAddress.extensionAttributes.point_id = null;
+                if (shippingAddress.hasOwnProperty('extension_attributes') &&
+                    typeof shippingAddress.extension_attributes === 'object' &&
+                    shippingAddress.extension_attributes.hasOwnProperty('point_id')) {
+                    shippingAddress.extension_attributes.point_id = null;
                 }
                 if (window.localStorage.getItem('selected_point')) {
                     window.localStorage.removeItem('selected_point');

@@ -69,7 +69,6 @@ define([
             });
 
             quote.shippingAddress.subscribe(function (address) {
-                console.log(address);
                 // self.setLocker({});
             });
 
@@ -124,11 +123,11 @@ define([
         resetSelectedLocker: function () {
             var self = this,
                 address = quote.shippingAddress();
-            if (address.extensionAttributes.hasOwnProperty('point_id') && address.extensionAttributes.point_id) {
+            if (address.extension_attributes.hasOwnProperty('point_id') && address.extension_attributes.point_id) {
                 var points = JSON.parse(window.localStorage.getItem('points'));
                 if (points) {
                     var point = points.find(function (item) {
-                        return item.id === address.extensionAttributes.point_id;
+                        return item.id === address.extension_attributes.point_id;
                     });
                     if (point) {
                         var html = "<p class='title'>Point selected:</p>" +
