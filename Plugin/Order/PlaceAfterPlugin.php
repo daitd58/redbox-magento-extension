@@ -49,11 +49,12 @@ class PlaceAfterPlugin
                 $businessId = $this->helper->getBusinessId();
                 $shippingAddress = $order->getShippingAddress();
                 $billingAddress = $order->getBillingAddress();
-                $pointId = $this->addressRepository->getByQuoteAddressId($quoteAddressId)->getPointId();
+                $redboxAddress = $this->addressRepository->getByQuoteAddressId($quoteAddressId);
+                $pointId = $redboxAddress->getPointId();
 
                 // do something with order object (Interceptor )
                 if ($apiToken) {
-                    $createShipmentUrl = 'https://app.redboxsa.com/api/business/v1/create-shipment';
+                    $createShipmentUrl = 'https://stage.redboxsa.com/api/business/v1/create-shipment';
                     $items = [];
                     $orderProducts = $order->getAllItems();
 
@@ -92,8 +93,11 @@ class PlaceAfterPlugin
                     $this->curl->setHeaders($headers);
                     $this->curl->post($createShipmentUrl, $fields_json);
                     $response = $this->curl->getBody();
-                    $this->logger->info('field----' . json_encode($fields));
-                    $this->logger->info('response----' . $response);
+                    $response_json = json_decode($response, true);
+                    if ($response_json['success'] && isset($response_json['url_shipping_label'])) {
+                        $redboxAddress->setUrlShippingLabel($response_json['url_shipping_label']);
+                        $redboxAddress->save();
+                    }
                 }
             }
         }

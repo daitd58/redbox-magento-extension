@@ -17,6 +17,7 @@ interface AddressInterface
     const ENTITY_ID = 'entity_id';
     const SHIPPING_ADDRESS_ID = 'shipping_address_id';
     const POINT_ID = 'point_id';
+    const URL_SHIPPING_LABEL = 'url_shipping_label';
     /**#@-*/
 
     /**
@@ -35,6 +36,11 @@ interface AddressInterface
     public function getPointId();
 
     /**
+     * @return string|null
+     */
+    public function getUrlShippingLabel();
+
+    /**
      * @param int $entityId
      * @return AddressInterface
      */
@@ -51,4 +57,10 @@ interface AddressInterface
      * @return AddressInterface
      */
     public function setPointId($pointId);
+
+    /**
+     * @param string $urlShippingLabel
+     * @return AddressInterface
+     */
+    public function setUrlShippingLabel($urlShippingLabel);
 }

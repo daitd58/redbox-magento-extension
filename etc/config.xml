@@ -5,8 +5,8 @@
             <redbox>
                 <active>0</active>
                 <price>5.00</price>
-                <name>Redbox Shipping</name>
-                <title>Redbox Shipping</title>
+                <name>Ship to RedBox Pickup point</name>
+                <title>Redbox</title>
                 <description>Redbox provides smart parcel lockers services to customers in the Kingdom of Saudi Arabia.</description>
                 <sort_order>15</sort_order>
                 <model>Redbox\Shipping\Model\Carrier\Redbox</model>

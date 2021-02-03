@@ -45,6 +45,9 @@ endif; ?>
             <ul style="list-style: none; padding-top: 20px;">
                 <li>Point ID: <?php /* @noEscape */ echo $block->getPointId() ?></li>
                 <li>Point address: <?php /* @noEscape */ echo $block->getPointAddress() ?></li>
+                <?php if ($block->getUrlShippingLabel()) : ?>
+                <li><a href="<?php /* @noEscape */ echo $block->getUrlShippingLabel() ?>" target="_blank">Shipping label</a></li>
+                <?php endif; ?>
             </ul>
         <?php endif; ?>
     </div>

@@ -67,6 +67,14 @@ class Address extends AbstractModel implements AddressInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getUrlShippingLabel()
+    {
+        return $this->_getData(static::URL_SHIPPING_LABEL);
+    }
+
+    /**
      * @param int $entityId
      * @return AddressInterface
      */
@@ -91,5 +99,14 @@ class Address extends AbstractModel implements AddressInterface
     public function setPointId($pointId)
     {
         return $this->setData(static::POINT_ID, $pointId);
+    }
+
+    /**
+     * @param string $urlShippingLabel
+     * @return AddressInterface
+     */
+    public function setUrlShippingLabel($urlShippingLabel)
+    {
+        return $this->setData(static::URL_SHIPPING_LABEL, $urlShippingLabel);
     }
 }

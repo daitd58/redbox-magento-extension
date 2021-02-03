@@ -34,6 +34,7 @@ define([
     'use strict';
 
     var popUp = null,
+        isFirstTime = true,
         localStorage = [];
     return Component.extend({
         defaults: {
@@ -62,36 +63,14 @@ define([
 
             quote.shippingMethod.subscribe(function (method) {
                 var popupButtonVisible = method.carrier_code === self.methodCode;
-                // if (!popupButtonVisible) {
-                //     self.setLocker({});
-                // }
                 self.isPopUpButtonVisible(popupButtonVisible);
-            });
-
-            quote.shippingAddress.subscribe(function (address) {
-                // self.setLocker({});
             });
 
             return this;
         },
         showLockersMap: function () {
-            fullScreenLoader.startLoader();
             var self = this;
-            var lat = 21.0500889;
-            var lng = 105.7976686;
-            storage.get(
-                resourceUrlManager.getUrl({'default': `/redbox/get-points?lat=${lat}&lng=${lng}`}, {})
-            ).done(
-                function (response) {
-                    var lockers = response[1];
-                    window.localStorage.setItem('points', JSON.stringify(lockers));
-                    self.showLockerPopUp();
-                }
-            ).fail(
-                function (response) {
-                    console.log('Error', response);
-                }
-            );
+            self.showLockerPopUp();
         },
         getPopUp: function () {
             var self = this,
@@ -118,19 +97,18 @@ define([
         showLockerPopUp: function () {
             this.isLockerPopUpVisible(true);
             $('#init-redbox').trigger('click');
-            fullScreenLoader.stopLoader();
         },
         resetSelectedLocker: function () {
             var self = this,
                 address = quote.shippingAddress();
-            if (address.extension_attributes.hasOwnProperty('point_id') && address.extension_attributes.point_id) {
+            if (address.hasOwnProperty('extension_attributes') && address.extension_attributes.hasOwnProperty('point_id') && address.extension_attributes.point_id) {
                 var points = JSON.parse(window.localStorage.getItem('points'));
                 if (points) {
                     var point = points.find(function (item) {
                         return item.id === address.extension_attributes.point_id;
                     });
                     if (point) {
-                        var html = "<p class='title'>Point selected:</p>" +
+                        var html = "<p class='title'>Ship to:</p>" +
                             "<p>" + point.point_name + ", " + point.host_name_en + "</p>" +
                             "<p>" + point.address.street + "</p>" +
                             "<p>" + point.address.district + "</p>" +

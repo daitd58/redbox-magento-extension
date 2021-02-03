@@ -36,19 +36,21 @@ define([
 ) {
     'use strict';
     var map = null;
-    var myMarker;
-    var myLatlng;
-    var shippingPosition = {};
     var points = [];
-    var markersPosition = [];
+    var markerCluster = null;
+    var infoWindow = null;
+    var isFirstTime = true;
     var defaultLocation = {
         lat: 24.7135517,
         lng: 46.67529569999999
     };
-    var self = this;
+    var isInfoWindowLoaded = false;
 
     return Component.extend({
         points: ko.observableArray([]),
+        currentPoint: ko.observable(),
+        invalid: ko.observable(false),
+        redboxLoading: ko.observable(false),
         /**
          * @return {exports}
          */
@@ -84,27 +86,44 @@ define([
                     lng: lng
                 },
                 map: map,
-                title: 'Your shipping address',
+                title: 'Your address',
                 icon: {
-                    url: 'https://stage.redboxsa.com/marker_my_location.png'
+                    url: window.myMarkerIconPath
                 }
             });
         },
 
-        setClickMarker: function(infowindow, marker, point, positionTop) {
-            marker.addListener('click', function(event) {
-                var contentString = `<h4>${point.host_name_en}</h4><p>${point.name}</p>`;
+        clearPoint: function () {
+            this.currentPoint(null);
+        },
 
-                infowindow.setContent(contentString);
+        closeModal: function () {
+            $('#button-reset-selected-locker').trigger('click');
+        },
 
-                infowindow.open(map, marker);
-                $('#list-point').animate({
-                    scrollTop: positionTop
-                }, 'slow');
+        validate: function () {
+            var hasPoint = points.find(function (point) {
+                return point.selected;
+            });
+
+            if (hasPoint) {
+                this.invalid(false);
+                this.closeModal();
+            } else {
+                this.invalid(true);
+            }
+        },
+
+        setClickMarker: function(marker, point) {
+            var self = this;
+            marker.addListener('click', function() {
+                self.currentPoint(point);
+                console.log()
             });
         },
 
         setFindAreaMap: function (map) {
+            var self = this;
             var card = document.getElementById('pac-card');
             var input = document.getElementById('pac-input');
 
@@ -118,7 +137,7 @@ define([
             autocomplete.addListener('place_changed', function() {
                 const place = autocomplete.getPlace();
                 if (place) {
-                    getPoints(place.geometry.location.lat(), place.geometry.location.lng())
+                    self.getPoints(place.geometry.location.lat(), place.geometry.location.lng())
                 }
             });
         },
@@ -138,7 +157,7 @@ define([
                 lat: lat,
                 lng: lng
             };
-            let temp = markersPosition.find(e => e.selected)
+            let temp = points.find(e => e.selected)
             if (temp) {
                 center = temp.location;
             }
@@ -157,23 +176,60 @@ define([
                 map.fitBounds(bounds);
             }
 
-            var infowindow = new google.maps.InfoWindow({
-                content: ''
+            var infoWindow = new google.maps.InfoWindow();
+            const locationButton = document.createElement("button");
+            locationButton.title = "Use my location";
+            locationButton.setAttribute('aria-label', 'Use my location');
+            locationButton.innerHTML = `<img src="${window.myLocationIconPath}" />`;
+            locationButton.classList.add("custom-map-control-button");
+            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
+            locationButton.addEventListener("click", () => {
+                // Try HTML5 geolocation.
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                            const pos = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            };
+                            self.addYourLocationButton(map, pos.lat, pos.lng);
+                            self.getPoints(pos.lat, pos.lng);
+                        }, function () {
+                            self.handleLocationError(true, infoWindow, map.getCenter());
+                        }
+                    );
+                } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, infoWindow, map.getCenter());
+                }
             });
-            markersPosition.forEach(function (point) {
+
+            var markers = points.map(function (point) {
                 var marker = new google.maps.Marker({
                     position: point.location,
                     map: map,
                     title: point.name,
                     icon: {
-                        url: 'https://stage.redboxsa.com/marker_redbox.png'
+                        url: window.markerIconPath
                     }
                 });
-                var positionTop = $(`.per-point[value-id=${point.id}]`).position().top;
-                self.setClickMarker(infowindow, marker, point, positionTop);
+                self.setClickMarker(marker, point);
+                return marker;
+            });
+            markerCluster = new MarkerClusterer(map, markers, {
+                imagePath: window.clusterIconPath,
+                averageCenter: true,
             });
             self.setFindAreaMap(map);
-            // self.addYourLocationButton(map, lat, lng);
+        },
+
+        handleLocationError: function (browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(
+                browserHasGeolocation
+                ? "Error: The Geolocation service failed."
+                : "Error: Your browser doesn't support geolocation."
+            );
+            infoWindow.open(map);
         },
 
         setMapWithPoint: function (id) {
@@ -189,8 +245,12 @@ define([
             $('.per-point').removeClass('selected');
             $(`.per-point[value-id=${id}]`).addClass('selected');
             var point = points.find(e => e.id === id);
-            $('#locker-name').val(`${point.host_name_en} (${point.point_name})`);
-            $('#locker-id').val(id);
+            this.invalid(false);
+            points = points.map(function (point) {
+                point.selected = point.id === id;
+                return point;
+            });
+            this.points(points);
             this.setMapWithPoint(id);
             window.localStorage.removeItem('selected_point');
             var address = quote.shippingAddress();
@@ -214,23 +274,43 @@ define([
 
             address.extension_attributes.point_id = $.isEmptyObject(point) ? false : point.id;
             window.localStorage.setItem('selected_point', JSON.stringify(point));
-            $('#button-reset-selected-locker').trigger('click');
+        },
+
+        getPoints: function (lat, lng, callback) {
+            var self = this;
+            self.redboxLoading(true);
+            storage.get(
+                resourceUrlManager.getUrl({'default': `/redbox/get-points?lat=${lat}&lng=${lng}`}, {})
+            ).done(
+                function (response) {
+                    points = response[1];
+                    points = points.map(function (point) {
+                        point.name = point.point_name;
+                        point.selected = false;
+                        return point;
+                    });
+                    window.localStorage.setItem('points', JSON.stringify(points));
+                    points = JSON.parse(window.localStorage.getItem('points'));
+                    self.points(points);
+                    self.redboxLoading(false);
+                    self.initializeGMap(defaultLocation.lat, defaultLocation.lng, points[0].location.lat, points[0].location.lng);
+                }
+            ).fail(
+                function (response) {
+                    console.log('Error', response);
+                }
+            );
         },
 
         initRedbox: function () {
+            if (!isFirstTime) {
+                return;
+            }
             var self = this;
-            points = JSON.parse(window.localStorage.getItem('points'));
-            points.forEach(function (point) {
-                markersPosition.push({
-                    id: point.id,
-                    name: point.point_name,
-                    host_name_en: point.host_name_en,
-                    location: point.location,
-                    selected: false
-                });
-            });
-            this.points(points);
-            self.initializeGMap(defaultLocation.lat, defaultLocation.lng, markersPosition[0].location.lat, markersPosition[0].location.lng);
+            isFirstTime = false;
+            var lat = 21.0500889;
+            var lng = 105.7976686;
+            self.getPoints(lat, lng)
         }
     });
 });

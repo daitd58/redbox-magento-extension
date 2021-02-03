@@ -5,6 +5,95 @@
  *
  * Built by Redbox Technologies, <thamer@redboxsa.com>
  */
+
+ .custom-map-control-button {
+    appearance: button;
+    background-color: #fff;
+    border: 0;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    margin: 10px;
+    padding: 0;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    font: 400 18px Roboto, Arial, sans-serif;
+    overflow: hidden;
+}
+
+.custom-map-control-button img {
+    width: 25px;
+}
+
+.redbox-modal .modal-header {
+    display: none;
+}
+
+.redbox-modal .modal-footer {
+    display: none;
+}
+
+.close-point {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    background-color: red;
+    color: #ffffff;
+    text-align: center;
+    line-height: 40px;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.redbox-message {
+    color: red;
+}
+
+.redbox-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.redbox-header h3 {
+    text-transform: uppercase;
+    color: #ba1d10;
+}
+
+.redbox-footer {
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.redbox-footer .redbox-btn-cancel {
+    padding: 10px 20px;
+    color: #fff;
+    background: red;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 0px 5px;
+    min-width: 100px;
+    border: 0px;
+}
+
+.redbox-footer .redbox-btn-next {
+    padding: 10px 20px;
+    color: #fff;
+    background: #0e8438;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 0px 5px;
+    min-width: 100px;
+    border: 0px;
+}
+
 input.each-permission-js:focus {
     box-shadow: none;
 }
@@ -20,6 +109,26 @@ input.each-permission-js:focus {
     position: relative;
 }
 
+.infowindow-template {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 400px;
+    left: 0;
+    transition: all 0.3s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+}
+
+.infowindow-template.active {
+    top: 0;
+}
+
+.location-map {
+    position: relative;
+    overflow: hidden;
+}
+
 @media (min-width: 1200px) {
     .modal-lg {
         width: 1140px;
@@ -29,13 +138,11 @@ input.each-permission-js:focus {
 .per-point {
     position: relative;
     padding: 10px;
-    margin-bottom: 10px;
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
     border-radius: 4px;
-}
-
-.per-point:first-child {
-    margin-top: 10px;
+    margin: 15px auto;
+    background-color: #ffffff;
+    max-width: 300px;
 }
 
 .icon-block {
@@ -225,9 +332,10 @@ input.each-permission-js:focus {
     border: 1px solid #e6e3e3;
     padding: 10px;
     border-radius: 3px;
-    right: 35px;
-    bottom: 51px;
-    width: 80%;
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 50px;
+    width: calc(100% - 42px);
 }
 
 .css-restricted-access {

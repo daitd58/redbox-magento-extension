@@ -13,8 +13,8 @@
 <script>
     require.config({
         paths: {
-            googleMaps: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBY1xlGe6jLbugOJegCsUGnzlufYWa5CRw&libraries=places',
-            MarkerClusterer: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer'
+            googleMaps: 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBY1xlGe6jLbugOJegCsUGnzlufYWa5CRw&libraries=places',
+            MarkerClusterer: 'https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min'
         },
         shim: {
             googleMaps: {
@@ -25,5 +25,9 @@
             }
         }
     });
+    window.markerIconPath = '<?php /* @noEscape */ echo $block->getViewFileUrl('Redbox_Shipping::images/redbox/marker_redbox.png') ?>';
+    window.myMarkerIconPath = '<?php /* @noEscape */ echo $block->getViewFileUrl('Redbox_Shipping::images/redbox/marker_my_location.png') ?>';
+    window.clusterIconPath = '<?php /* @noEscape */ echo $block->getViewFileUrl('Redbox_Shipping::images/redbox/cluster') ?>';
+    window.myLocationIconPath = '<?php /* @noEscape */ echo $block->getViewFileUrl('Redbox_Shipping::images/redbox/my_location.png') ?>';
 </script>
 <div></div>

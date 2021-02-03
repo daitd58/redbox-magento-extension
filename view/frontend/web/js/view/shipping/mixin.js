@@ -37,6 +37,7 @@ define([
             var shippingAddress = quote.shippingAddress(),
                 pointAddress = this.getChild('redbox-shipping-method').selectedPointAddress();
             this.lockerErrors('');
+            console.log(shippingAddress);
             var hasPointId = shippingAddress.hasOwnProperty('extension_attributes') &&
                 typeof shippingAddress.extension_attributes === 'object' &&
                 shippingAddress.extension_attributes.hasOwnProperty('point_id') &&
@@ -47,12 +48,28 @@ define([
             }
             if (quote.shippingMethod().carrier_code === point().methodCode) {
                 var selectedPoint = JSON.parse(window.localStorage.getItem('selected_point'));
-                if (!hasPointId || !selectedPoint) {
-                    this.lockerErrors('Please choose Redbox point.');
+                if (!hasPointId && !pointAddress) {
+                    this.lockerErrors('Please pickup a point.');
                     return false;
                 }
                 this.getChild('redbox-shipping-method').selectedPointAddress(pointAddress);
-                quote.shippingAddress().extension_attributes.point_id = selectedPoint.id;
+                if (!shippingAddress.hasOwnProperty('extension_attributes')) {
+                    Object.defineProperty(shippingAddress, 'extension_attributes', {
+                        value: {},
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    });
+                }
+    
+                if (!shippingAddress.extension_attributes.hasOwnProperty('point_id')) {
+                    Object.defineProperty(shippingAddress.extension_attributes, 'point_id', {
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    });
+                }
+                shippingAddress.extension_attributes.point_id = selectedPoint.id;
             } else {
                 if (shippingAddress.hasOwnProperty('extension_attributes') &&
                     typeof shippingAddress.extension_attributes === 'object' &&
@@ -67,7 +84,12 @@ define([
         },
 
         selectShippingMethod: function (shippingMethod) {
-            if (shippingMethod.carrier_code === 'redbox') {
+            var shippingAddress = quote.shippingAddress();
+            var hasPointId = shippingAddress.hasOwnProperty('extension_attributes') &&
+                typeof shippingAddress.extension_attributes === 'object' &&
+                shippingAddress.extension_attributes.hasOwnProperty('point_id') &&
+                !!shippingAddress.extension_attributes.point_id;
+            if (shippingMethod.carrier_code === 'redbox' && !hasPointId) {
                 $('.choose-locker').trigger('click');
             }
             return this._super();

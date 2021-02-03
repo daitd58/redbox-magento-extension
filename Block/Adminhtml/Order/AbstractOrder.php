@@ -18,6 +18,7 @@ class AbstractOrder extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 {
 
     public $pointId;
+    public $urlShippingLabel;
     public $order;
     public $quoteFactory;
     public $addressRepository;
@@ -49,7 +50,9 @@ class AbstractOrder extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
                 $this->shippingAddress = $this->order->getShippingAddress();
                 $quoteAddressId = $quote->getShippingAddress()->getId();
                 if ($quoteAddressId) {
-                    $this->pointId = $this->addressRepository->getByQuoteAddressId($quoteAddressId)->getPointId();
+                    $address = $this->addressRepository->getByQuoteAddressId($quoteAddressId);
+                    $this->pointId = $address->getPointId();
+                    $this->urlShippingLabel = $address->getUrlShippingLabel();
                     if ($this->pointId) {
                         return true;
                     }
@@ -86,5 +89,7 @@ class AbstractOrder extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 
     }//end getPointAddress()
 
-
+    public function getUrlShippingLabel() {
+        return $this->urlShippingLabel;
+    }
 }//end class
