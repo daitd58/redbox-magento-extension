@@ -66,7 +66,7 @@ class PointService implements PointServiceInterface
     {
         $apiToken   = $this->helper->getApiToken();
         $businessId = $this->helper->getBusinessId();
-        $url = 'https://stage.redboxsa.com/api/business/v1/get-points?lat=' . $lat . '&lng=' . $lng . '&distance=10000000';
+        $url = 'https://app.redboxsa.com/api/business/v1/get-points?lat=' . $lat . '&lng=' . $lng . '&distance=10000000';
 
         $this->logger->info('api token: ' . $apiToken);
         if ($apiToken) {

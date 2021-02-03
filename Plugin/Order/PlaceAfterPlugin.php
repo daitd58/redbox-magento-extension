@@ -54,7 +54,7 @@ class PlaceAfterPlugin
 
                 // do something with order object (Interceptor )
                 if ($apiToken) {
-                    $createShipmentUrl = 'https://stage.redboxsa.com/api/business/v1/create-shipment';
+                    $createShipmentUrl = 'https://app.redboxsa.com/api/business/v1/create-shipment';
                     $items = [];
                     $orderProducts = $order->getAllItems();
 

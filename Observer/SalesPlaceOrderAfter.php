@@ -55,7 +55,7 @@ class SalesPlaceOrderAfter implements ObserverInterface
                 }
                 $pointId = $address->getPointId();
                 $apiToken   = $this->helper->getApiToken();
-                $url = 'https://stage.redboxsa.com/api/business/v1/get-point-detail?point_id=' . $pointId;
+                $url = 'https://app.redboxsa.com/api/business/v1/get-point-detail?point_id=' . $pointId;
 
                 if ($apiToken) {
                     $headers = [
