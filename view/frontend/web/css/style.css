@@ -26,10 +26,6 @@
     width: 25px;
 }
 
-.redbox-modal .modal-header {
-    display: none;
-}
-
 .redbox-modal .modal-footer {
     display: none;
 }
@@ -336,6 +332,7 @@ input.each-permission-js:focus {
     transform: translateX(50%);
     bottom: 50px;
     width: calc(100% - 42px);
+    z-index: 1;
 }
 
 .css-restricted-access {

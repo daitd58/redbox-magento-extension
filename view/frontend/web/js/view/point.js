@@ -114,10 +114,10 @@ define([
                             "<p>" + point.address.district + "</p>" +
                             "<p>" + point.address.city + ", " + point.address.postCode + "</p>";
                         self.selectedPointAddress(html);
-                        self.getPopUp().closeModal();
                     }
                 }
             }
+            self.getPopUp().closeModal();
         }
     });
 });

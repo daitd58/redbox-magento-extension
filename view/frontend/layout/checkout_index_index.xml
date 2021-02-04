@@ -47,7 +47,6 @@
                                                                         <item name="innerScroll" xsi:type="boolean">true</item>
                                                                         <item name="trigger" xsi:type="string">map</item>
                                                                         <item name="modalClass" xsi:type="string">redbox-modal</item>
-                                                                        <item name="clickableOverlay" xsi:type="boolean">false</item>
                                                                     </item>
                                                                 </item>
                                                                 <item name="methodCode" xsi:type="helper" helper="Redbox\Shipping\Helper\Data::getMethodCode"/>

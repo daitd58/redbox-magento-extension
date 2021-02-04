@@ -38,13 +38,12 @@ define([
     var map = null;
     var points = [];
     var markerCluster = null;
-    var infoWindow = null;
     var isFirstTime = true;
     var defaultLocation = {
         lat: 24.7135517,
         lng: 46.67529569999999
     };
-    var isInfoWindowLoaded = false;
+    var yourLocation = null;
 
     return Component.extend({
         points: ko.observableArray([]),
@@ -63,6 +62,7 @@ define([
             if ($(event.currentTarget).prop("checked") === true) {
                 $(event.currentTarget).parent().parent().parent().parent().parent().find('.area-select-point button').removeAttr('disabled');
                 $(event.currentTarget).parent().parent().parent().parent().parent().find('.area-select-point button').removeClass('disabled');
+                $(event.currentTarget).parent().parent().parent().parent().hide();
             } else {
                 $(event.currentTarget).parent().parent().parent().parent().parent().find('.area-select-point button').attr('disabled', true);
                 $(event.currentTarget).parent().parent().parent().parent().parent().find('.area-select-point button').addClass('disabled');
@@ -157,9 +157,8 @@ define([
                 lat: lat,
                 lng: lng
             };
-            let temp = points.find(e => e.selected)
-            if (temp) {
-                center = temp.location;
+            if (yourLocation) {
+                center = yourLocation;
             }
 
             var myOptions = {
@@ -187,22 +186,20 @@ define([
                 // Try HTML5 geolocation.
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(function (position) {
-                            const pos = {
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude,
-                            };
-                            self.addYourLocationButton(map, pos.lat, pos.lng);
-                            self.getPoints(pos.lat, pos.lng);
-                        }, function () {
-                            self.handleLocationError(true, infoWindow, map.getCenter());
-                        }
-                    );
+                        yourLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        self.getPoints(yourLocation.lat, yourLocation.lng);
+                    }, function () {
+                        self.handleLocationError(true, infoWindow, map.getCenter());
+                    });
                 } else {
-                // Browser doesn't support Geolocation
-                handleLocationError(false, infoWindow, map.getCenter());
+                    // Browser doesn't support Geolocation
+                    handleLocationError(false, infoWindow, map.getCenter());
                 }
             });
-
+                
             var markers = points.map(function (point) {
                 var marker = new google.maps.Marker({
                     position: point.location,
@@ -220,6 +217,9 @@ define([
                 averageCenter: true,
             });
             self.setFindAreaMap(map);
+            if (yourLocation) {
+                self.addYourLocationButton(map, pos.lat, pos.lng);
+            }
         },
 
         handleLocationError: function (browserHasGeolocation, infoWindow, pos) {
@@ -274,6 +274,7 @@ define([
 
             address.extension_attributes.point_id = $.isEmptyObject(point) ? false : point.id;
             window.localStorage.setItem('selected_point', JSON.stringify(point));
+            $('#button-reset-selected-locker').trigger('click');
         },
 
         getPoints: function (lat, lng, callback) {

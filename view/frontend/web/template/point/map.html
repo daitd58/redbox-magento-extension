@@ -11,19 +11,19 @@
 <div id="lockers" class="lockers" style="display: none;">
     <div class="row redbox-map">
         <div class="col-md-12 redbox-header">
-            <h3>RedBox</h3>
+            <h3>Ship to RedBox Pickup point</h3>
         </div>
         <div id="init-redbox" data-bind="click: initRedbox"></div>
         <div class="col-md-12 modal_body_map">
             <div class="area-map">
                 <div class="title-area">Search for a RedBox Pickup point near you</div>
+                <p>RedBox Pickup points enable you to pick up your package at your convenience from a nearby self-service Locker or a staffed location</p>
                 <div class="pac-card" id="pac-card"></div>
                 <div id="pac-container">
                     <input id="pac-input" type="text" placeholder="Search by Address">
                     <i class="fa fa-search"></i>
                 </div>
             </div>
-            <p>RedBox Pickup points enable you to pick up your package at your convenience from a nearby self-service Locker or a staffed location</p>
             <div class="location-map" id="location-map">
                 <div style="height: 400px;" id="map"></div>
                 <div data-bind="with: currentPoint, attr: { class: currentPoint() && currentPoint().id ? 'infowindow-template active' : 'infowindow-template' }">
@@ -63,13 +63,10 @@
                                             type="checkbox"
                                             data-bind="attr: {id: id + '-restricted-access'}, event: { change: $parent.confirmCanAccessThisLocation.bind($parent) }"
                                         />
-                                        I confirm that i have access to this localtion
+                                        I confirm that I have access to this location
                                     </label>
                                 </div>
                             </div>
-                        </div>
-                        <div data-bind="visible: !is_public" class="area-icon-control-popup-prev">
-                            <i class="fa fa-times" data-bind="click: $parent.controlPopupWarningRestricted"></i>
                         </div>
                         <div class="area-select-point">
                             <button data-bind="click: $parent.pickPoint.bind($parent, id), attr: {class: is_public ? 'asp-not-disabled' : 'asp-not-disabled disabled', disabled: !is_public}">Ship to this location</button>
@@ -78,11 +75,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-12 redbox-footer">
-            <div class="redbox-message" data-bind="visible: invalid">Please pickup a point</div>
-            <button class="btn redbox-btn-cancel" data-bind="click: closeModal">Cancel</button>
-            <button class="btn redbox-btn-next" data-bind="click: validate">Next</button>
         </div>
         <div data-bind="visible: redboxLoading" class="redbox-loading">
             <div class="redbox-loader"></div>
