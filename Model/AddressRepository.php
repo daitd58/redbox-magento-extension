@@ -58,7 +58,7 @@ class AddressRepository implements AddressRepositoryInterface
 
         if (!$address->getId()) {
             throw new NoSuchEntityException(
-                __('Redbox checkout address with id "%1" does not exist.', $addressId)
+                __('RedBox checkout address with id "%1" does not exist.', $addressId)
             );
         }
 
@@ -80,7 +80,7 @@ class AddressRepository implements AddressRepositoryInterface
 
         if (!$address->getId()) {
             throw new NoSuchEntityException(
-                __('Redbox checkout address for quote address id "%1" does not exist.', $quoteAddressId)
+                __('RedBox checkout address for quote address id "%1" does not exist.', $quoteAddressId)
             );
         }
 
