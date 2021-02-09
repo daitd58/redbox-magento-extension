@@ -1,0 +1,15 @@
+<div class="locker" visible="isPopUpButtonVisible">
+    <a href="#" style="display: none;" id="button-reset-selected-locker" click="resetSelectedLocker"/>
+    <div class="redbox-button-container">
+        <div class="locker-selected-info" data-bind="html: selectedPointAddress"></div>
+        <!-- ko if: selectedPointAddress -->
+        <a href="#" class="choose-locker" click="showLockersMap">Change point location</a>
+        <!-- /ko -->
+        <!-- ko ifnot: selectedPointAddress -->
+        <a href="#" class="choose-locker" click="showLockersMap">Choose point</a>
+        <!-- /ko -->
+    </div>
+    <div class="validation-message">
+        <p text="element.lockerErrors"></p>
+    </div>
+</div>

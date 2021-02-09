@@ -29,9 +29,6 @@
                                         <item name="shipping-step" xsi:type="array">
                                             <item name="children" xsi:type="array">
                                                 <item name="shippingAddress" xsi:type="array">
-                                                    <item name="config" xsi:type="array">
-                                                        <item name="shippingMethodItemTemplate" xsi:type="string">Redbox_Shipping/shipping-method-item</item>
-                                                    </item>
                                                     <item name="children" xsi:type="array">
                                                         <item name="redbox-shipping-method" xsi:type="array">
                                                             <item name="config" xsi:type="array">
@@ -39,6 +36,7 @@
                                                                     <item name="0" xsi:type="string">checkout.steps.shipping-step.step-config</item>
                                                                     <item name="1" xsi:type="string">checkoutProvider</item>
                                                                 </item>
+                                                                <item name="template" xsi:type="string">Redbox_Shipping/point-selector</item>
                                                                 <item name="popUpForm" xsi:type="array">
                                                                     <item name="element" xsi:type="string">#lockers</item>
                                                                     <item name="options" xsi:type="array">
@@ -47,13 +45,23 @@
                                                                         <item name="innerScroll" xsi:type="boolean">true</item>
                                                                         <item name="trigger" xsi:type="string">map</item>
                                                                         <item name="modalClass" xsi:type="string">redbox-modal</item>
+                                                                        <item name="buttons" xsi:type="array">
+                                                                            <item name="save" xsi:type="array">
+                                                                                <item name="text" xsi:type="string" translate="true">Select Location</item>
+                                                                                <item name="class" xsi:type="string">action primary action-select-locker</item>
+                                                                            </item>
+                                                                            <item name="cancel" xsi:type="array">
+                                                                                <item name="text" xsi:type="string" translate="true">Close</item>
+                                                                                <item name="class" xsi:type="string">action secondary action-hide-popup</item>
+                                                                            </item>
+                                                                        </item>
                                                                     </item>
                                                                 </item>
                                                                 <item name="methodCode" xsi:type="helper" helper="Redbox\Shipping\Helper\Data::getMethodCode"/>
                                                                 <item name="searchMachineUrl" xsi:type="string">/redbox/get-points</item>
                                                             </item>
                                                             <item name="component" xsi:type="string">Redbox_Shipping/js/view/point</item>
-                                                            <item name="displayArea" xsi:type="string">redbox-shipping-method</item>
+                                                            <item name="displayArea" xsi:type="string">shippingAdditional</item>
                                                             <item name="provider" xsi:type="string">checkoutProvider</item>
                                                             <item name="sortOrder" xsi:type="string">10</item>
                                                             <item name="children" xsi:type="array">

@@ -15,6 +15,9 @@
             <action method="setTemplate">
                 <argument name="template" xsi:type="string">Redbox_Shipping::order/view/info.phtml</argument>
             </action>
+            <arguments>
+                <argument name="rbViewModel" xsi:type="object">Redbox\Shipping\ViewModel\Adminhtml\Order\Shipment</argument>
+            </arguments>
         </referenceBlock>
     </body>
 </page>

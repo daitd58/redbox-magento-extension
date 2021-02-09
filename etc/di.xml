@@ -30,6 +30,5 @@
             <argument name="quoteFactory" xsi:type="object">Magento\Quote\Model\QuoteFactory</argument>
         </arguments>
     </type>
-    <preference for="Magento\Sales\Block\Adminhtml\Order\AbstractOrder" type="Redbox\Shipping\Block\Adminhtml\Order\AbstractOrder"/>
     <preference for="Magento\Shipping\Block\Adminhtml\View\Form" type="Redbox\Shipping\Block\Adminhtml\Shipping\View\Form"/>
 </config>
