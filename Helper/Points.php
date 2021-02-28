@@ -62,18 +62,4 @@ class Points
 
     }//end getApiToken()
 
-
-    /**
-     * @return mixed
-     */
-    public function getBusinessId()
-    {
-        return $this->scopeConfig->getValue(
-            'carriers/redbox/business_id',
-            ScopeInterface::SCOPE_STORE
-        );
-
-    }//end getBusinessId()
-
-
 }//end class

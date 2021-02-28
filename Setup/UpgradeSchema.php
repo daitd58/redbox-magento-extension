@@ -43,14 +43,14 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.0.5') < 0) {
             $setup->getConnection()->addIndex(
-                $setup->getTable('redbox_checkout_address'),
+                $setup->getTable($redboxTable),
                 $setup->getIdxName(
-                    'redbox_checkout_address',
+                    $redboxTable,
                     ['shipping_address_id'],
                     \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
                 ),
                 ['shipping_address_id'],
-                ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+                \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
             );
         }
 

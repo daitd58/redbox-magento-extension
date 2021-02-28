@@ -96,4 +96,11 @@ class Redbox extends AbstractCarrier implements CarrierInterface
     {
         return [$this->_code => $this->getConfigData('name')];
     }
+
+    /**
+     * @return bool
+     */
+    public function isShippingLabelsAvailable() {
+        return false;
+    }
 }

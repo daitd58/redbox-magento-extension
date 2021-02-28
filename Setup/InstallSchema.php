@@ -138,7 +138,7 @@ class InstallSchema implements InstallSchemaInterface
                     $data[] = [
                         'status' => $status,
                         'state' => $code,
-                        'is_default' => is_array($statusInfo) && isset($statusInfo['default']) ? 1 : 0,
+                        'is_default' => 1,
                     ];
                 }
             }

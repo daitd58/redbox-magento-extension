@@ -58,7 +58,8 @@ class Shipment implements \Magento\Framework\View\Element\Block\ArgumentInterfac
                     $this->shippingAddress = $this->order->getShippingAddress();
                     $quoteAddressId = $quote->getShippingAddress()->getId();
                     if ($quoteAddressId) {
-                        $this->pointId = $this->addressRepository->getByQuoteAddressId($quoteAddressId)->getPointId();
+                        $address = $this->addressRepository->getByQuoteAddressId($quoteAddressId);
+                        $this->pointId = $address->getPointId();
                         $this->urlShippingLabel = $address->getUrlShippingLabel();
                         if ($this->pointId) {
                             return true;

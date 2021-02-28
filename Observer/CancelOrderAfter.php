@@ -45,13 +45,11 @@ class CancelOrderAfter implements ObserverInterface
         if ($order->getShippingMethod() == 'redbox_redbox' && $this->helper->isActive()) {
             $orderId = $order->getEntityId();
             $apiToken   = $this->helper->getApiToken();
-            $businessId = $this->helper->getBusinessId();
-            if ($orderId && $apiToken && $businessId) {
+            if ($orderId && $apiToken) {
                 $url = 'https://app.redboxsa.com/api/business/v1/cancel-shipment-by-order-id';
                 $headers = ["Authorization: Bearer $apiToken", 'Content-Type: application/json'];
                 $fields = [
                     'reference'			=> $orderId,
-                    'business_id'		=> $businessId
                 ];
                 $fields_json = json_encode($fields);
 

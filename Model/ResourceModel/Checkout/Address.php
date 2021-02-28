@@ -26,9 +26,5 @@ class Address extends AbstractDb
     public function _construct()
     {
         $this->_init('redbox_checkout_address', AddressInterface::ENTITY_ID);
-        $this->addUniqueField([
-            'field' => [AddressInterface::SHIPPING_ADDRESS_ID],
-            'title' => __('Redbox address with the same quote address')
-        ]);
     }
 }

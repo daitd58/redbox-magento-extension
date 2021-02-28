@@ -46,7 +46,6 @@ class PlaceAfterPlugin
             $quoteAddressId = $quote->getShippingAddress()->getId();
             if ($quoteAddressId) {
                 $apiToken   = $this->helper->getApiToken();
-                $businessId = $this->helper->getBusinessId();
                 $shippingAddress = $order->getShippingAddress();
                 $billingAddress = $order->getBillingAddress();
                 $redboxAddress = $this->addressRepository->getByQuoteAddressId($quoteAddressId);
@@ -82,9 +81,6 @@ class PlaceAfterPlugin
                         'from_platform' => 'magento'
                     ];
 
-                    if ($businessId) {
-                        $fields['business_id'] = $businessId;
-                    }
                     $fields_json = json_encode($fields);
                     $headers = [
                         "Content-Type" => "application/json",
