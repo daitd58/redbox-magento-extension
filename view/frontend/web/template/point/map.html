@@ -11,16 +11,16 @@
 <div id="lockers" class="lockers" style="display: none;">
     <div class="row redbox-map">
         <div class="col-md-12 redbox-header">
-            <h3>Ship to RedBox Pickup point</h3>
+            <h3><translate args="'Ship to RedBox Pickup point'" /></h3>
         </div>
         <div id="init-redbox" data-bind="click: initRedbox"></div>
         <div class="col-md-12 modal_body_map">
             <div class="area-map">
-                <div class="title-area">Search for a RedBox Pickup point near you</div>
-                <p>RedBox Pickup points enable you to pick up your package at your convenience from a nearby self-service Locker or a staffed location</p>
+                <div class="title-area" translate="'Search for a RedBox Pickup point near you'"></div>
+                <p translate="'RedBox Pickup points enable you to pick up your package at your convenience from a nearby self-service Locker or a staffed location'"></p>
                 <div class="pac-card" id="pac-card"></div>
                 <div id="pac-container">
-                    <input id="pac-input" type="text" placeholder="Search by Address">
+                    <input id="pac-input" type="text" data-bind="attr: {placeholder: $t('Search by Address')}">
                     <i class="fa fa-search"></i>
                 </div>
             </div>
@@ -50,10 +50,10 @@
                         </div>
                         <div class="icon-block">
                             <div class="a-icon"><i class="fa fa-truck"></i></div>
-                            <div class="a-content">Estimate time delivery: <span data-bind="text: estimateTime"></span>H</div>
+                            <div class="a-content"><translate args="'Estimate time delivery'" />: <span data-bind="text: estimateTime"></span> <translate args="'days'" /></div>
                         </div>
                         <div data-bind="visible: !is_public" class="popup-confirm-access-restricted-area">
-                            <b class="css-restricted-access">Restricted access:</b>
+                            <b class="css-restricted-access"><translate args="'Restricted access'" />:</b>
                             <span data-bind="text: alert_message.en"></span>
                             <div class="tem-css">
                                 <div class="checkbox pd-0">
@@ -63,14 +63,14 @@
                                             type="checkbox"
                                             data-bind="attr: {id: id + '-restricted-access'}, event: { change: $parent.confirmCanAccessThisLocation.bind($parent) }"
                                         />
-                                        I confirm that I have access to this location
+                                        <translate args="'I confirm that I have access to this location'"/>
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="area-select-point">
-                            <button data-bind="click: $parent.pickPoint.bind($parent, id), attr: {class: is_public ? 'asp-not-disabled' : 'asp-not-disabled disabled', disabled: !is_public}">Ship to this location</button>
-                            <span class="selected-point"><i class="fa fa-check" aria-hidden="true"></i>Selected Point</span>
+                            <button data-bind="click: $parent.pickPoint.bind($parent, id), attr: {class: is_public ? 'asp-not-disabled' : 'asp-not-disabled disabled', disabled: !is_public}"><translate args="'Ship to this location'"/></button>
+                            <span class="selected-point"><i class="fa fa-check" aria-hidden="true"></i><translate args="'Selected Point'"/></span>
                         </div>
                     </div>
                 </div>

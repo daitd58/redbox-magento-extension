@@ -46,8 +46,11 @@ $rbViewModel = $block->getData('rbViewModel'); ?>
 
         <?php if ($rbViewModel && $rbViewModel->isShippingRedbox($order)) : ?>
             <ul style="list-style: none; padding-top: 20px;">
-                <li>Point ID: <?php /* @noEscape */ echo $rbViewModel->getPointId() ?></li>
-                <li>Point address: <?php /* @noEscape */ echo $rbViewModel->getPointAddress() ?></li>
+                <li><?= /* @noEscape */ __('Point ID: ') ?><?php /* @noEscape */ echo $rbViewModel->getPointId() ?></li>
+                <li><?= /* @noEscape */ __('Point address: ') ?><?php /* @noEscape */ echo $rbViewModel->getPointAddress() ?></li>
+                <?php if ($rbViewModel->getUrlShippingLabel()) : ?>
+                <li><a href="<?php /* @noEscape */ echo $rbViewModel->getUrlShippingLabel() ?>" target="_blank"><?= /* @noEscape */ __('Shipping label') ?></a></li>
+                <?php endif; ?>
             </ul>
         <?php endif; ?>
     </div>

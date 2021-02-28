@@ -6,8 +6,9 @@
 define([
     'uiComponent',
     'Magento_Customer/js/customer-data',
-    'Magento_Checkout/js/model/quote'
-], function (Component, customerData, quote) {
+    'Magento_Checkout/js/model/quote',
+    'mage/translate'
+], function (Component, customerData, quote, $t) {
     'use strict';
 
     var countryData = customerData.get('directory-data');
@@ -39,7 +40,7 @@ define([
         },
 
         getLockerName: function () {
-            return 'Point name: ' + locker.building_no;
+            return $t('Point name: ') + locker.building_no;
         },
 
         getLockerPostcode: function () {

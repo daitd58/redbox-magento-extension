@@ -13,7 +13,8 @@ define([
     'Redbox_Shipping/js/view/point',
     'ko',
     'jquery',
-    'Magento_Checkout/js/action/select-shipping-address'
+    'Magento_Checkout/js/action/select-shipping-address',
+    'mage/translate'
 ], function (
     translate,
     quote,
@@ -21,7 +22,8 @@ define([
     point,
     ko,
     $,
-    selectShippingAddress
+    selectShippingAddress,
+    $t
 ) {
     'use strict';
 
@@ -49,7 +51,7 @@ define([
             if (quote.shippingMethod().carrier_code === point().methodCode) {
                 var selectedPoint = JSON.parse(window.localStorage.getItem('selected_point'));
                 if (!hasPointId && !pointAddress) {
-                    this.lockerErrors('Please pickup a point.');
+                    this.lockerErrors($t('Please pickup a point.'));
                     return false;
                 }
                 this.getChild('redbox-shipping-method').selectedPointAddress(pointAddress);

@@ -3,10 +3,10 @@
     <div class="redbox-button-container">
         <div class="locker-selected-info" data-bind="html: selectedPointAddress"></div>
         <!-- ko if: selectedPointAddress -->
-        <a href="#" class="choose-locker" click="showLockersMap">Change point location</a>
+        <a href="#" class="choose-locker" click="showLockersMap" translate="'Select other Pickup point'"></a>
         <!-- /ko -->
         <!-- ko ifnot: selectedPointAddress -->
-        <a href="#" class="choose-locker" click="showLockersMap">Choose point</a>
+        <a href="#" class="choose-locker" click="showLockersMap" translate="'Select a Pickup point'"></a>
         <!-- /ko -->
     </div>
     <div class="validation-message">

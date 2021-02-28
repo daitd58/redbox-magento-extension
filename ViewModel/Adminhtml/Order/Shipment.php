@@ -59,6 +59,7 @@ class Shipment implements \Magento\Framework\View\Element\Block\ArgumentInterfac
                     $quoteAddressId = $quote->getShippingAddress()->getId();
                     if ($quoteAddressId) {
                         $this->pointId = $this->addressRepository->getByQuoteAddressId($quoteAddressId)->getPointId();
+                        $this->urlShippingLabel = $address->getUrlShippingLabel();
                         if ($this->pointId) {
                             return true;
                         }
@@ -98,5 +99,12 @@ class Shipment implements \Magento\Framework\View\Element\Block\ArgumentInterfac
         }
 
         return '';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUrlShippingLabel() {
+        return $this->urlShippingLabel;
     }
 }

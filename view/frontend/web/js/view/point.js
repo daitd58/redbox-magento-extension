@@ -108,7 +108,7 @@ define([
                         return item.id === address.extension_attributes.point_id;
                     });
                     if (point) {
-                        var html = "<p class='title'>Ship to:</p>" +
+                        var html = "<p class='title'>" + $t("Shipping to:") + "</p>" +
                             "<p>" + point.point_name + ", " + point.host_name_en + "</p>" +
                             "<p>" + point.address.street + "</p>" +
                             "<p>" + point.address.district + "</p>" +

@@ -11,28 +11,21 @@ define([
     'uiComponent',
     'ko',
     'Magento_Checkout/js/model/quote',
-    'Magento_Ui/js/modal/modal',
     'mage/translate',
-    'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/model/resource-url-manager',
     'mage/storage',
-    'googleMaps',
-    'Magento_Checkout/js/model/shipping-save-processor/default',
-    'uiRegistry',
-    'MarkerClusterer'
+    'MarkerClusterer',
+    'Magento_Checkout/js/checkout-data'
 ], function (
     $,
     Component,
     ko,
     quote,
-    modal,
     $t,
-    fullScreenLoader,
     resourceUrlManager,
     storage,
-    googleMaps,
-    shippingSaveProcessor,
-    registry
+    MarkerClusterer,
+    checkoutData
 ) {
     'use strict';
     var map = null;
@@ -86,7 +79,7 @@ define([
                     lng: lng
                 },
                 map: map,
-                title: 'Your address',
+                title: $t('Your address'),
                 icon: {
                     url: window.myMarkerIconPath
                 }
@@ -177,8 +170,8 @@ define([
 
             var infoWindow = new google.maps.InfoWindow();
             const locationButton = document.createElement("button");
-            locationButton.title = "Use my location";
-            locationButton.setAttribute('aria-label', 'Use my location');
+            locationButton.title = $t("Use my location");
+            locationButton.setAttribute('aria-label', $t('Use my location'));
             locationButton.innerHTML = `<img src="${window.myLocationIconPath}" />`;
             locationButton.classList.add("custom-map-control-button");
             map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
@@ -226,8 +219,8 @@ define([
             infoWindow.setPosition(pos);
             infoWindow.setContent(
                 browserHasGeolocation
-                ? "Error: The Geolocation service failed."
-                : "Error: Your browser doesn't support geolocation."
+                ? $t("Error: The Geolocation service failed.")
+                : $t("Error: Your browser doesn't support geolocation.")
             );
             infoWindow.open(map);
         },
@@ -288,6 +281,7 @@ define([
                     points = points.map(function (point) {
                         point.name = point.point_name;
                         point.selected = false;
+                        point.estimateTime = self.getEstimateTime(point.estimateTime);
                         return point;
                     });
                     window.localStorage.setItem('points', JSON.stringify(points));
@@ -301,6 +295,16 @@ define([
                     console.log('Error', response);
                 }
             );
+        },
+
+        getEstimateTime: function (hours) {
+            var days = hours / 24;
+            if (days < 2) {
+                return '1-2';
+            } else {
+                var floor10 = Math.floor(days);
+                return `${floor10}-${floor10 + 1}`;
+            }
         },
 
         initRedbox: function () {
