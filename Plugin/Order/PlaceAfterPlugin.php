@@ -40,6 +40,7 @@ class PlaceAfterPlugin
     public function afterPlace(OrderManagementInterface $orderManagementInterface, $order)
     {
         $orderId = $order->getId();
+        $this->logger->info('orderId: ' . $order->getIncrementId());
 
         if ($order->getShippingMethod() == 'redbox_redbox' && $this->helper->isActive()) {
             $quote = $this->quoteFactory->create()->loadByIdWithoutStore($order->getQuoteId());
@@ -66,13 +67,14 @@ class PlaceAfterPlugin
                     }
 
                     $fields = [
-                        'reference' => $order->getEntityId(),
+                        'reference' => $order->getIncrementId(),
                         'point_id' => $pointId,
                         'sender_name' => $billingAddress->getFirstName() . ' ' . $billingAddress->getLastName(),
                         'sender_email' => $billingAddress->getEmail(),
                         'sender_phone' => $billingAddress->getTelephone(),
                         'sender_address' => $billingAddress->getStreet()[0] . ' ' . $billingAddress->getCity() . ' ' . $billingAddress->getCountryId(),
                         'customer_name' => $shippingAddress->getFirstName() . ' ' . $shippingAddress->getLastName(),
+                        "customer_email" => $shippingAddress->getEmail(),
                         'customer_phone' => $shippingAddress->getTelephone(),
                         'customer_address' => $shippingAddress->getStreet()[0] . ' ' . $shippingAddress->getCity() . ' ' . $shippingAddress->getCountryId(),
                         'cod_currency' => $order->getOrderCurrencyCode(),
