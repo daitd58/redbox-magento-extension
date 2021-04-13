@@ -22,4 +22,7 @@
     <event name="order_cancel_after">
         <observer name="redbox_shipping_observer_cancel_order_after" instance="Redbox\Shipping\Observer\CancelOrderAfter" />
     </event>
+    <event name="sales_order_shipment_save_after">
+        <observer name="redbox_shipping_observer_order_shipment_save_after" instance="Redbox\Shipping\Observer\SaveOrderShipmentAfter" />
+    </event>
 </config>

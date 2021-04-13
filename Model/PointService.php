@@ -65,9 +65,9 @@ class PointService implements PointServiceInterface
     public function getPoints($lat = 21.0500889, $lng = 105.7976686)
     {
         $apiToken   = $this->helper->getApiToken();
-        $url = 'https://app.redboxsa.com/api/business/v1/get-points?lat=' . $lat . '&lng=' . $lng . '&distance=10000000';
+        $apiEndpoint = $this->helper->getApiEndpoint();
+        $url = $apiEndpoint . '/get-points?lat=' . $lat . '&lng=' . $lng . '&distance=10000000';
 
-        $this->logger->info('api token: ' . $apiToken);
         if ($apiToken) {
             $headers = [
                 "Content-Type" => "application/json",

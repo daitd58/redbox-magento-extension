@@ -39,14 +39,12 @@ class PlaceAfterPlugin
     */
     public function afterPlace(OrderManagementInterface $orderManagementInterface, $order)
     {
-        $orderId = $order->getId();
-        $this->logger->info('orderId: ' . $order->getIncrementId());
-
         if ($order->getShippingMethod() == 'redbox_redbox' && $this->helper->isActive()) {
             $quote = $this->quoteFactory->create()->loadByIdWithoutStore($order->getQuoteId());
             $quoteAddressId = $quote->getShippingAddress()->getId();
             if ($quoteAddressId) {
                 $apiToken   = $this->helper->getApiToken();
+                $apiEndpoint   = $this->helper->getApiEndpoint();
                 $shippingAddress = $order->getShippingAddress();
                 $billingAddress = $order->getBillingAddress();
                 $redboxAddress = $this->addressRepository->getByQuoteAddressId($quoteAddressId);
@@ -54,7 +52,7 @@ class PlaceAfterPlugin
 
                 // do something with order object (Interceptor )
                 if ($apiToken) {
-                    $createShipmentUrl = 'https://app.redboxsa.com/api/business/v1/create-shipment';
+                    $createShipmentUrl = $apiEndpoint . '/create-shipment';
                     $items = [];
                     $orderProducts = $order->getAllItems();
 

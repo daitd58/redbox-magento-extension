@@ -62,4 +62,28 @@ class Points
 
     }//end getApiToken()
 
+    /**
+     * @return bool
+     */
+    public function getProductionMode()
+    {
+        return $this->scopeConfig->getValue(
+            'carriers/redbox/production',
+            ScopeInterface::SCOPE_STORE
+        );
+
+    }//end getProductionMode()
+
+    /**
+     * @return mixed
+     */
+    public function getApiEndpoint()
+    {
+        if ($this->getProductionMode()) {
+            return 'https://app.redboxsa.com/api/business/v1';
+        }
+
+        return 'https://stage.redboxsa.com/api/business/v1';
+    }//end getApiEndpoint()
+
 }//end class

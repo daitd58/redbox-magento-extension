@@ -30,6 +30,7 @@ define([
     'use strict';
     var map = null;
     var points = [];
+    var markers = [];
     var markerCluster = null;
     var isFirstTime = true;
     var defaultLocation = {
@@ -129,7 +130,7 @@ define([
             );
             autocomplete.addListener('place_changed', function() {
                 const place = autocomplete.getPlace();
-                if (place) {
+                if (place && place.geometry) {
                     self.getPoints(place.geometry.location.lat(), place.geometry.location.lng())
                 }
             });
@@ -193,14 +194,16 @@ define([
                 }
             });
                 
-            var markers = points.map(function (point) {
+            markers = points.map(function (point) {
                 var marker = new google.maps.Marker({
                     position: point.location,
                     map: map,
                     title: point.name,
                     icon: {
-                        url: window.markerIconPath
-                    }
+                        url: self.getMarkerImage(point.type_point)
+                    },
+                    id: point.id,
+                    type: point.type_point
                 });
                 self.setClickMarker(marker, point);
                 return marker;
@@ -211,9 +214,35 @@ define([
             });
             self.setFindAreaMap(map);
             if (yourLocation) {
-                self.addYourLocationButton(map, pos.lat, pos.lng);
+                self.addYourLocationButton(map, yourLocation.lat, yourLocation.lng);
             }
         },
+
+        getMarkerImage: function (pointType) {
+			switch (pointType) {
+				case 'Both':
+					return window.markerCounterLockerIconPath;
+				case 'Counter':
+					return window.markerCounterIconPath;
+				case 'Locker':
+					return window.markerLockerIconPath;
+				default:
+					return window.markerLockerIconPath;
+			}
+		},
+
+		getPointImage: function (pointType) {
+			switch (pointType) {
+				case 'Both':
+					return window.counterLockerIconPath;
+				case 'Counter':
+					return window.counterIconPath;
+				case 'Locker':
+					return window.lockerIconPath;
+				default:
+					return window.lockerIconPath;
+			}
+		},
 
         handleLocationError: function (browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
@@ -238,13 +267,21 @@ define([
             $('.per-point').removeClass('selected');
             $(`.per-point[value-id=${id}]`).addClass('selected');
             var point = points.find(e => e.id === id);
-            this.invalid(false);
+            var self = this;
+            self.invalid(false);
+            markers.forEach(function (marker) {
+				if (marker.id == id) {
+					marker.setIcon(window.markerSelectedIconPath);
+				} else {
+					marker.setIcon(self.getMarkerImage(marker.type_point));
+				}
+			});
             points = points.map(function (point) {
                 point.selected = point.id === id;
                 return point;
             });
-            this.points(points);
-            this.setMapWithPoint(id);
+            self.points(points);
+            self.setMapWithPoint(id);
             window.localStorage.removeItem('selected_point');
             var address = quote.shippingAddress();
 
@@ -282,13 +319,14 @@ define([
                         point.name = point.point_name;
                         point.selected = false;
                         point.estimateTime = self.getEstimateTime(point.estimateTime);
+                        point.image = self.getPointImage(point.type_point);
                         return point;
                     });
                     window.localStorage.setItem('points', JSON.stringify(points));
                     points = JSON.parse(window.localStorage.getItem('points'));
                     self.points(points);
                     self.redboxLoading(false);
-                    self.initializeGMap(defaultLocation.lat, defaultLocation.lng, points[0].location.lat, points[0].location.lng);
+                    self.initializeGMap(lat, lng, points[0].location.lat, points[0].location.lng);
                 }
             ).fail(
                 function (response) {
@@ -313,9 +351,7 @@ define([
             }
             var self = this;
             isFirstTime = false;
-            var lat = 21.0500889;
-            var lng = 105.7976686;
-            self.getPoints(lat, lng)
+            self.getPoints(defaultLocation.lat, defaultLocation.lng)
         }
     });
 });
