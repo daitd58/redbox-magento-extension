@@ -4,7 +4,7 @@
         <carriers>
             <redbox>
                 <active>0</active>
-                <production>0</production>
+                <production>1</production>
                 <price>5.00</price>
                 <name>Ship to RedBox Pickup point</name>
                 <title>Redbox</title>
