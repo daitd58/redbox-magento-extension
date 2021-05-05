@@ -6,6 +6,20 @@
  * Built by Redbox Technologies, <thamer@redboxsa.com>
  */
 
+html[lang=ar] #pac-container i {
+    left: 20px;
+    right: auto;
+}
+
+html[lang=ar] #pac-input {
+    padding: 0 20px 0 45px; 
+}
+
+html[lang=ar] .a-content {
+    padding-left: 0;
+    padding-right: 10px;
+}
+
 button.custom-map-control-button {
     appearance: button;
     background-color: #fff;
@@ -161,6 +175,7 @@ input.each-permission-js:focus {
 .icon-block {
     display: flex;
     margin-top: 10px;
+    font-family: unset !important;
 }
 
 .icon-block:first-child {

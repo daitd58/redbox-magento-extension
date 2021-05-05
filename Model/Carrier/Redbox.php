@@ -56,6 +56,23 @@ class Redbox extends AbstractCarrier implements CarrierInterface
     }
 
     /**
+     * Check subtotal for allowed free shipping
+     *
+     * @param RateRequest $request
+     *
+     * @return bool
+     */
+    private function isFreeShippingRequired(RateRequest $request): bool
+    {
+        $minSubtotal = $request->getPackageValueWithDiscount();
+        if ($request->getBaseSubtotalWithDiscountInclTax() && $this->getConfigFlag('tax_including')) {
+            $minSubtotal = $request->getBaseSubtotalWithDiscountInclTax();
+        }
+
+        return $minSubtotal >= $this->getConfigData('amount');
+    }
+
+    /**
      * Custom Shipping Rates Collector
      *
      * @param RateRequest $request
@@ -80,7 +97,10 @@ class Redbox extends AbstractCarrier implements CarrierInterface
         $method->setMethodTitle($this->getConfigData('name'));
 
         $shippingCost = (float)$this->getConfigData('price');
-
+        if ($this->getConfigData('amount') && $this->isFreeShippingRequired($request)) {
+            $shippingCost = 0;
+        }
+        
         $method->setPrice($shippingCost);
         $method->setCost($shippingCost);
 

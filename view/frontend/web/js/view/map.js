@@ -309,6 +309,7 @@ define([
 
         getPoints: function (lat, lng, callback) {
             var self = this;
+            var locale = $('html').attr('lang');
             self.redboxLoading(true);
             storage.get(
                 resourceUrlManager.getUrl({'default': `/redbox/get-points?lat=${lat}&lng=${lng}`}, {})
@@ -317,6 +318,7 @@ define([
                     points = response[1];
                     points = points.map(function (point) {
                         point.name = point.point_name;
+                        point.host_name = locale === 'ar' ? point.host_name_ar : point.host_name_en;
                         point.selected = false;
                         point.estimateTime = self.getEstimateTime(point.estimateTime);
                         point.image = self.getPointImage(point.type_point);

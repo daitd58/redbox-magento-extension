@@ -13,6 +13,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Quote\Model\QuoteFactory;
+use Magento\Framework\Locale\Resolver;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Redbox\Shipping\Api\Data\AddressRepositoryInterface;
 use Redbox\Shipping\Helper\Points;
@@ -24,19 +25,22 @@ class SalesPlaceOrderAfter implements ObserverInterface
     private $logger;
     private $addressRepository;
     private $curl;
+    private $store;
 
     public function __construct(
         AddressRepositoryInterface $addressRepository,
         QuoteFactory $quoteFactory,
         Points $helper,
         PsrLoggerInterface $logger,
-        Curl $curl
+        Curl $curl,
+        Resolver $store
     ) {
         $this->curl = $curl;
         $this->logger = $logger;
         $this->helper = $helper;
         $this->addressRepository = $addressRepository;
         $this->quoteFactory = $quoteFactory;
+        $this->store = $store;
     }
 
     public function execute(Observer $observer)
@@ -67,8 +71,10 @@ class SalesPlaceOrderAfter implements ObserverInterface
                     $this->curl->get($url);
                     $result = json_decode($this->curl->getBody(), true);
                     $shippingAddress->setPostcode($result['point']['address']['postCode']);
+                    $this->logger->info('MassPrint----' . $this->store->getLocale());
+                    $hostName = $this->store->getLocale() == "ar_SA" ? $result['point']['host_name_ar'] : $result['point']['host_name_en'];
                     $shippingAddress->setStreet(
-                        $result['point']['host_name_en'] . " (" . $result['point']['point_name'] . "), " .
+                        $hostName . " (" . $result['point']['point_name'] . "), " .
                             $result['point']['address']['street']
                     );
                     $shippingAddress->setCity($result['point']['address']['city']);

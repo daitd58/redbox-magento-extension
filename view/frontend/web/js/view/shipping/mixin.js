@@ -91,7 +91,7 @@ define([
                 typeof shippingAddress.extension_attributes === 'object' &&
                 shippingAddress.extension_attributes.hasOwnProperty('point_id') &&
                 !!shippingAddress.extension_attributes.point_id;
-            if (shippingMethod.carrier_code === 'redbox' && !hasPointId) {
+            if (shippingMethod.available && shippingMethod.carrier_code === 'redbox' && !hasPointId) {
                 $('.choose-locker').trigger('click');
             }
             return this._super();

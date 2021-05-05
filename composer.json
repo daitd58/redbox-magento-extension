@@ -2,13 +2,14 @@
     "name": "redboxsa/shipping",
     "description": "RedBox provides smart parcel lockers services to customers in the Kingdom of Saudi Arabia. Customers can receive and return their packages through RedBox parcel lockers within hundreds of RedBox Points around the city 24/7.",
     "require": {
-        "magento/framework": ">=100.0.0"
+        "magento/framework": "2.0.0",
+        "magento/module-integration": "2.0.0"
     },
     "type": "magento2-module",
     "license": [
         "GPL-3.0-or-later"
     ],
-    "version": "1.0.8",
+    "version": "1.0.9",
     "autoload": {
         "files": [
             "registration.php"
