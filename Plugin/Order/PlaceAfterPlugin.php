@@ -76,7 +76,7 @@ class PlaceAfterPlugin
                         'customer_phone' => $shippingAddress->getTelephone(),
                         'customer_address' => $shippingAddress->getStreet()[0] . ' ' . $shippingAddress->getCity() . ' ' . $shippingAddress->getCountryId(),
                         'cod_currency' => $order->getOrderCurrencyCode(),
-                        'cod_amount' => $order->getGrandTotal(),
+                        'cod_amount' => $order->getTotalDue(),
                         'items' => $items,
                         'from_platform' => 'magento'
                     ];
