@@ -49,6 +49,10 @@ class PlaceAfterPlugin
                 $billingAddress = $order->getBillingAddress();
                 $redboxAddress = $this->addressRepository->getByQuoteAddressId($quoteAddressId);
                 $pointId = $redboxAddress->getPointId();
+                $payment = $order->getPayment();
+                $method = $payment->getMethodInstance();
+                $methodCode = $method->getCode();
+                $this->logger->info('orderId: ' . $order->getId());
 
                 // do something with order object (Interceptor )
                 if ($apiToken) {
@@ -66,6 +70,7 @@ class PlaceAfterPlugin
 
                     $fields = [
                         'reference' => $order->getIncrementId(),
+                        'original_tracking_number' => $order->getId(),
                         'point_id' => $pointId,
                         'sender_name' => $billingAddress->getFirstName() . ' ' . $billingAddress->getLastName(),
                         'sender_email' => $billingAddress->getEmail(),
@@ -76,7 +81,7 @@ class PlaceAfterPlugin
                         'customer_phone' => $shippingAddress->getTelephone(),
                         'customer_address' => $shippingAddress->getStreet()[0] . ' ' . $shippingAddress->getCity() . ' ' . $shippingAddress->getCountryId(),
                         'cod_currency' => $order->getOrderCurrencyCode(),
-                        'cod_amount' => $order->getTotalDue(),
+                        'cod_amount' => $methodCode == 'cashondelivery' ? $order->getTotalDue() : 0,
                         'items' => $items,
                         'from_platform' => 'magento'
                     ];
@@ -89,6 +94,7 @@ class PlaceAfterPlugin
                     $this->curl->setHeaders($headers);
                     $this->curl->post($createShipmentUrl, $fields_json);
                     $response = $this->curl->getBody();
+                    $this->logger->info('Response ' . $response);
                     $response_json = json_decode($response, true);
                     if ($response_json['success'] && isset($response_json['url_shipping_label'])) {
                         $redboxAddress->setUrlShippingLabel($response_json['url_shipping_label']);
