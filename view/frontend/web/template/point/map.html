@@ -27,9 +27,9 @@
             <div class="location-map" id="location-map">
                 <div style="height: 400px;" id="map"></div>
                 <div data-bind="with: currentPoint, attr: { class: currentPoint() && currentPoint().id ? 'infowindow-template active' : 'infowindow-template' }">
-                    <div class="close-point" data-bind="click: $parent.clearPoint.bind($parent)"><i class="fa fa-times"></i></div>
                     <div data-bind="attr: {'value-id': id, class: selected ? 'per-point selected' : 'per-point'}">
-                        <div class="icon-block">
+                        <div class="close-point" data-bind="click: $parent.clearPoint.bind($parent)"><i class="fa fa-times"></i></div>
+                        <div class="icon-block mt-20">
                             <div class="a-icon">
                                 <img data-bind="attr: {'src': image}">
                             </div>

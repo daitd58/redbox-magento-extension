@@ -11,19 +11,21 @@
 ?>
 
 <script>
-    require.config({
-        paths: {
-            googleMaps: 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBY1xlGe6jLbugOJegCsUGnzlufYWa5CRw&libraries=places',
-            MarkerClusterer: 'https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min'
-        },
-        shim: {
-            googleMaps: {
-                exports: 'google.maps'
-            },
-            MarkerClusterer: {
-                exports: 'MarkerClusterer'
-            }
+    var path = {
+        MarkerClusterer: 'https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min'
+    };
+    var shim = {
+        MarkerClusterer: {
+            exports: 'MarkerClusterer'
         }
+    };
+    if (typeof google === "undefined" || typeof google.maps === "undefined") {
+        path.googleMaps = 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBY1xlGe6jLbugOJegCsUGnzlufYWa5CRw&libraries=places';
+        shim.googleMaps = { exports: 'google.maps' };
+    }
+    require.config({
+        paths: path,
+        shim: shim
     });
     window.markerCounterIconPath = '<?php /* @noEscape */ echo $block->getViewFileUrl('Redbox_Shipping::images/redbox/marker_counter.png') ?>';
     window.markerLockerIconPath = '<?php /* @noEscape */ echo $block->getViewFileUrl('Redbox_Shipping::images/redbox/marker_locker.png') ?>';

@@ -83,7 +83,7 @@ class Points
             return 'https://app.redboxsa.com/api/business/v1';
         }
 
-        return 'http://localhost:8080/api/business/v1';
+        return 'https://stage.redboxsa.com/api/business/v1';
     }//end getApiEndpoint()
 
 }//end class
