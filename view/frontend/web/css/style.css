@@ -221,6 +221,11 @@ input.each-permission-js:focus {
     line-height: 25px;
 }
 
+.a-content .name2 .locker {
+    color: #C52600;
+    font-weight: bold;
+}
+
 .area-select-point {
     text-align: center;
     margin-top: 10px;

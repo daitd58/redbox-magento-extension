@@ -244,6 +244,19 @@ define([
 			}
 		},
 
+        getLocationName: function (pointType) {
+            switch (pointType) {
+				case 'Both':
+					return $t('Counter & Locker');
+				case 'Counter':
+					return $t('Counter');
+				case 'Locker':
+					return $t('Locker');
+				default:
+					return $t('Locker');
+			}
+        },
+
         handleLocationError: function (browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
             infoWindow.setContent(
@@ -322,10 +335,10 @@ define([
                         point.selected = false;
                         point.estimateTime = self.getEstimateTime(point.estimateTime);
                         point.image = self.getPointImage(point.type_point);
+                        point.type = self.getLocationName(point.type_point);
                         return point;
                     });
                     window.localStorage.setItem('points', JSON.stringify(points));
-                    points = JSON.parse(window.localStorage.getItem('points'));
                     self.points(points);
                     self.redboxLoading(false);
                     self.initializeGMap(lat, lng, points[0].location.lat, points[0].location.lng);
