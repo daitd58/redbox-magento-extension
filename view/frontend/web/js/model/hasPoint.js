@@ -21,7 +21,7 @@ define(
                     shippingAddress.extension_attributes.hasOwnProperty('point_id') &&
                     !!shippingAddress.extension_attributes.point_id;
 
-                if (quote.shippingMethod().carrier_code === point().methodCode) {
+                if (quote.shippingMethod() && quote.shippingMethod().carrier_code === point().methodCode) {
                     var selectedPoint = JSON.parse(window.localStorage.getItem('selected_point'));
                     if (!hasPointId || !selectedPoint) {
                         return false;

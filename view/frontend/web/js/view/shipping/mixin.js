@@ -48,7 +48,7 @@ define([
             if (!this._super()) {
                 return false;
             }
-            if (quote.shippingMethod().carrier_code === point().methodCode) {
+            if (quote.shippingMethod() && quote.shippingMethod().carrier_code === point().methodCode) {
                 var selectedPoint = JSON.parse(window.localStorage.getItem('selected_point'));
                 if (!hasPointId && !pointAddress) {
                     this.lockerErrors($t('Please pickup a point.'));
