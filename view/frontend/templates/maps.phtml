@@ -19,10 +19,9 @@
             exports: 'MarkerClusterer'
         }
     };
-    if (typeof google === "undefined" || typeof google.maps === "undefined") {
-        path.googleMaps = 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBY1xlGe6jLbugOJegCsUGnzlufYWa5CRw&libraries=places';
-        shim.googleMaps = { exports: 'google.maps' };
-    }
+    <?php if ($block->isMapActive()) { ?>
+        require(['https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBY1xlGe6jLbugOJegCsUGnzlufYWa5CRw&libraries=places'])
+    <?php } ?>
     require.config({
         paths: path,
         shim: shim

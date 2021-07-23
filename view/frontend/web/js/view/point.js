@@ -16,7 +16,6 @@ define([
     'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/model/resource-url-manager',
     'mage/storage',
-    'googleMaps',
     'uiRegistry'
 ], function (
     $,
@@ -28,7 +27,6 @@ define([
     fullScreenLoader,
     resourceUrlManager,
     storage,
-    googleMaps,
     uiRegistry
 ) {
     'use strict';

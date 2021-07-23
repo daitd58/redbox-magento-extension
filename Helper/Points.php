@@ -86,4 +86,16 @@ class Points
         return 'https://stage.redboxsa.com/api/business/v1';
     }//end getApiEndpoint()
 
+    /**
+     * @return bool
+     */
+    public function isMapActive()
+    {
+        return (bool) $this->scopeConfig->getValue(
+            'carriers/redbox/active_map',
+            ScopeInterface::SCOPE_STORE
+        );
+
+    }//end isMapActive()
+
 }//end class

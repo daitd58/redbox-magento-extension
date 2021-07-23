@@ -7,6 +7,7 @@
                 <production>1</production>
                 <price>5.00</price>
                 <tax_including>0</tax_including>
+                <active_map>1</active_map>
                 <name>Ship to RedBox Pickup point</name>
                 <title>Redbox</title>
                 <description>Redbox provides smart parcel lockers services to customers in the Kingdom of Saudi Arabia.</description>

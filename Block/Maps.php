@@ -10,13 +10,13 @@
 namespace Redbox\Shipping\Block;
 
 use Magento\Framework\View\Element\Template;
-use Redbox\Shipping\Helper\Data;
+use Redbox\Shipping\Helper\Points;
 
 class Maps extends Template
 {
 
     /**
-     * @var Data
+     * @var Points
      */
     private $helper;
     /** @var Template\Context  */
@@ -26,16 +26,20 @@ class Maps extends Template
      * Constructor
      *
      * @param Template\Context $context
-     * @param Data $helper
+     * @param Points $helper
      * @param array $data
      */
     public function __construct(
         Template\Context $context,
-        Data $helper,
+        Points $helper,
         array $data = []
     ) {
         $this->context = $context;
         $this->helper = $helper;
         parent::__construct($context, $data);
+    }
+
+    public function isMapActive() {
+        return $this->helper->isMapActive();
     }
 }
