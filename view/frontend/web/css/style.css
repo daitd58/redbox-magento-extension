@@ -181,7 +181,7 @@ input.each-permission-js:focus {
     width: calc(100% - 30px);
 }
 
-.icon-block {
+.per-point .icon-block {
     display: flex;
     margin-top: 10px;
     font-family: unset !important;
